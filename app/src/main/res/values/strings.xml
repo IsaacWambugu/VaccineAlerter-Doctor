@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">Vaccine-Alerter-Client</string>
+    <string name="app_name">Vaccine-Alerter-Doctor</string>
     <string name="action_settings">Settings</string>
 
 
+    <!---Global-->
+    <string name="ok">OKAY</string>
 
 
     <!--  Into Activity -->
@@ -28,5 +30,11 @@
     <!-- navigation bar -->
     <string name="nav_log">Log Out</string>
 
+    <!-- ChildActivity-->
+    <string-array name="pizzaSize">
+        <item>Male</item>
+        <item>Female</item>
+
+    </string-array>
 
 </resources>

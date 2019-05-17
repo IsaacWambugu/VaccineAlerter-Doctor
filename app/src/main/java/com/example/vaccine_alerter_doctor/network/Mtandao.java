@@ -1,4 +1,4 @@
-package com.example.vaccine_alerter_doctor.util;
+package com.example.vaccine_alerter_doctor.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

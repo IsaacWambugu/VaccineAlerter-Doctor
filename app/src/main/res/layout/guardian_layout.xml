@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/view_activity_add_guardian"
+    >
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/view_guardian_linear"
+        android:layout_marginBottom="60dp"
+        >
+
+        <EditText
+            android:id="@+id/textGuardianId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            style="@style/editText"
+            android:hint="Guardian Id"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/testGuardianFName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            style="@style/editText"
+            android:hint="First Name"/>
+
+        <EditText
+            android:id="@+id/testGuardianLName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:imeOptions="actionNext"
+            android:inputType="text"
+            style="@style/editText"
+            android:hint="Last Name"/>
+        <EditText
+            android:id="@+id/textGuardianNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            style="@style/editText"
+            android:hint="Phone number"
+            android:inputType="number"/>
+        <Spinner
+            android:id="@+id/guard_gender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:entries="@array/pizzaSize"
+            android:layout_marginRight="8dp"/>
+
+        <EditText
+            android:id="@+id/textGuardDOB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:ems="10"
+            android:focusable="false"
+            android:layout_centerHorizontal="true"
+            android:focusableInTouchMode="false"
+            android:hint="Enter Date" />
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/guardian_spin_kit"
+            style="@style/SpinKitView.Large.Wave"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_below="@id/view_guardian_linear"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            app:SpinKit_Color="@color/colorAccent" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/add_guard_btn"
+        android:text="Add"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#000"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+
+        />
+
+</RelativeLayout>

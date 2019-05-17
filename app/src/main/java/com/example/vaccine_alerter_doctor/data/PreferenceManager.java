@@ -20,18 +20,29 @@ public class PreferenceManager {
         sharedPref = context.getSharedPreferences(myPrefs, mode);
 
     }
-
-    public void setGuardianId(int id){
+    public void setApiKey(String apiKey){
 
         editor  = sharedPref.edit();
-        editor.putInt("guardian_id", id);
+        editor.putString("api_key", apiKey);
+        editor.apply();
+
+    }
+    public String getApiKey(){
+
+        return sharedPref.getString("api_key", null);
+
+    }
+    public void setDoctorId(int id){
+
+        editor  = sharedPref.edit();
+        editor.putInt("doctor_id", id);
         editor.apply();
 
     }
 
-    public int getGuardianId(){
+    public int getDoctorId(){
 
-        return sharedPref.getInt("guardian_id", -1);
+        return sharedPref.getInt("doctor_id", -1);
     }
 
     public void setDate(){
@@ -46,39 +57,39 @@ public class PreferenceManager {
         return sharedPref.getString("date", null);
     }
 
-    public void setGuardianName(String name){
+    public void setDoctorName(String name){
 
         editor  = sharedPref.edit();
-        editor.putString("guardian_name", name);
+        editor.putString("doctor_name", name);
         editor.apply();
 
     }
-    public String getGuardianName(){
+    public String getDoctorName(){
 
-        return sharedPref.getString("guardian_name", null);
+        return sharedPref.getString("doctor_name", null);
     }
 
-    public void setGuardianNumber(String number){
+    public void setDoctorNumber(String number){
 
         editor  = sharedPref.edit();
-        editor.putString("guardian_number", number);
+        editor.putString("doctor_number", number);
         editor.apply();
 
     }
-    public String getGuardianNumber(){
+    public String getDoctorNumber(){
 
-        return sharedPref.getString("guardian_number", null);
+        return sharedPref.getString("doctor_number", null);
     }
 
-    public void setGuardianGender(String gender){
+    public void setDoctorGender(String gender){
 
         editor  = sharedPref.edit();
-        editor.putString("guardian_gender", gender);
+        editor.putString("doctor_gender", gender);
         editor.apply();
 
     }
-    public String getGuardianGender(){
+    public String getDoctorGender(){
 
-        return sharedPref.getString("guardian_gender", null);
+        return sharedPref.getString("doctor_gender", null);
     }
 }

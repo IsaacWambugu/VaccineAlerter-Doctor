@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Provide Guardian Id"
+        android:id="@+id/editTextInformationName" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Address"
+        android:id="@+id/text_guardian_id" />
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/guardian_spin_kit"
+        style="@style/SpinKitView.Large.Wave"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginBottom="20dp"
+        android:layout_below="@id/view_guardian_linear"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        app:SpinKit_Color="@color/colorAccent"
+        />
+
+     <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+         <Button
+             android:id="@+id/guardian_dialog_cancel"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Cancel"/>
+         <Button
+             android:id="@+id/guardian_dialog_proceed"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Continue"/>
+     </LinearLayout>
+
+</LinearLayout>

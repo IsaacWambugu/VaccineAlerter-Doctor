@@ -4,17 +4,26 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vaccine_alerter_doctor.R;
+import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
+import com.example.vaccine_alerter_doctor.network.NetWorker;
+import com.example.vaccine_alerter_doctor.others.MultipleSelectionSpinner;
+import com.example.vaccine_alerter_doctor.network.Mtandao;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -24,13 +33,18 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
     private Toolbar toolbar;
     private View view;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private MultipleSelectionSpinner mSpinner;
 
     private String id = "";
+
+    private TextView chid_name;
+    private TextView child_gender;
+    private TextView child_dob;
 
 
     private TextView bcg1_days;
     private TextView bcg1_date;
-    private TextView bcg1_status;
+    private ImageView bcg1_status;
 
     private TextView dpt1_days;
     private TextView dpt1_date;
@@ -101,13 +115,14 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
     private TextView yellow_status;
 
 
+ private FloatingActionMenu  fab2, fab3, fab4, fab5;
+    private AlertDialog alertDialog;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         setContentView(R.layout.activity_vaccine_list);
         setUIConfig();
         getIncomingIntent(savedInstanceState);
@@ -126,9 +141,12 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
+        if (id == R.id.edit_child) {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+            Log.d("----->", "Here");
+
+
+            startActivity(new Intent( VaccineListActivity.this, ChildActivity.class ).putExtra("option", 1));
             return true;
         }
 
@@ -137,9 +155,13 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
 
     private void setUIConfig() {
 
+        chid_name = (TextView) findViewById(R.id.child_name);
+        child_dob = (TextView)findViewById(R.id.child_dob);
+        child_gender = (TextView)findViewById(R.id.child_gender);
+
         bcg1_days = (TextView) findViewById(R.id.bcg1_days);
         bcg1_date = (TextView)  findViewById(R.id.bcg1_date);
-        bcg1_status = (TextView) findViewById(R.id.bcg1_status);
+        bcg1_status = (ImageView) findViewById(R.id.bcg1_status);
 
         dpt1_days = (TextView) findViewById(R.id.dpt1_days);
         dpt1_date = (TextView)  findViewById(R.id.dpt1_date);
@@ -213,8 +235,6 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
         yellow_date = (TextView)  findViewById(R.id.yellow_date);
         yellow_status = (TextView) findViewById(R.id.yellow_status);
 
-
-
         toolbar = (Toolbar) findViewById(R.id.toolbar_vaccine_list);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.vaccine_swipe_container);
         view = getWindow().getDecorView().getRootView();
@@ -235,7 +255,6 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
             }
 
         });
-
         swipeRefreshLayout .setColorSchemeResources(android.R.color.holo_blue_bright,
 
                 android.R.color.holo_green_light,
@@ -276,14 +295,6 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
 
     }
 
-    @Override
-    public void onLoadErrorResponse(String response) {
-
-        swipeRefreshLayout.setRefreshing(false);
-        showSnackBar("Something went wrong.Try again later");
-
-    }
-
     private void showSnackBar(String mesg) {
 
         Snackbar.make(view, mesg, Snackbar.LENGTH_SHORT)
@@ -316,11 +327,9 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
 
         try {
 
-
-            //int id = json.getJSONObject("vaccines").getJSONObject("OPV1").getString("id");
-            //String firstName = json.getJSONArray("children").getJSONObject(i).getString("first_name");
-         //   String lastName = json.getJSONArray("children").getJSONObject(i).getString("last_name");
-           // String gender = json.getJSONArray("children").getJSONObject(i).getString("gender");
+            String name = json.getJSONObject("details").getString("name");
+            String dob = json.getJSONObject("details").getString("dob");
+            String gender = json.getJSONObject("details").getString("gender");
 
             int opv1_due = json.getJSONObject("vaccines").getJSONObject("OPV1").getInt("due");
             int opv1_admin = json.getJSONObject("vaccines").getJSONObject("OPV1").getInt("administered");
@@ -429,14 +438,14 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
 
             if(bcg1_due == 1){
 
-                this.bcg1_status.setText("VACCINE is due!");
+               // this.bcg1_status.setText("VACCINE is due!");
 
             }else if(bcg1_admin == 1){
 
-                this.bcg1_status.setText("VACCINE Was Administered!");
+                //this.bcg1_status.setText("VACCINE Was Administered!");
             }else{
 
-                this.bcg1_status.setText("");
+               // this.bcg1_status.setText("");
             }
 
 
@@ -668,7 +677,6 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
                 this.rota2_status.setText("");
             }
 
-
             this.vitA1_days.setText(String.valueOf(vitA1_days));
             this.vitA1_date.setText(vitA1_date_admin);
 
@@ -729,44 +737,32 @@ public class VaccineListActivity extends AppCompatActivity implements LoadConten
                 this.yellow_status.setText("");
             }
 
-                    /*
-                    if (opv1_due == 1 || bcg1_due == 1 || hepB1_due == 1 ||
-                            dpt1_due == 1 || hibB1_due == 1 || hepB2_due == 1 ||
-                            opv2_due == 1 || pneu_due == 1 || rota1_due == 1 ||
-                            dpt2_due == 1 || hibB2_due == 1 || hepB3_due == 1 ||
-                            opv3_due == 1 || vitA1_due == 1 || rota2_due == 1 ||
-                            vitA2_due == 1 || measles_due == 1 || yellow_due == 1
-                    ) {
+            chid_name.setText(name);
+            child_gender.setText(gender);
+            child_dob.setText(dob);
 
+        } catch (/* private void showDialog(int selection){
+      }
+        });
 
-
-                    }
-*/
-                    /*
-                    childrenList.add(new ChildModel(id, firstName, lastName, gender,
-                            opv1_due, bcg1_due, hepB1_due, dpt1_due, hibB1_due, hepB2_due,
-                            opv2_due, pneu_due, rota1_due, dpt2_due, hibB2_due, hepB3_due,
-                            opv3_due, vitA1_due, rota2_due, vitA2_due, measles_due, yellow_due, vaccineDue));
-                            */
-
-
-
-            //  Log.d("Children------->", childrenList.toString());
-        } catch (JSONException jsonE) {
-
-
-            Log.d("Err---->", jsonE.toString());
-        }finally {
-
-
-
-        }
+        AlertDialog addDialog = build.create();
+        addDialog.show();
 
 
     }
+*/JSONException jsonE) {
 
+            moveToMainActivity();
+
+        }
+    }
     private void moveToMainActivity(){
 
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, VaccinationActivity.class));
+    }
+
+    @Override
+    public void onLoadErrorResponse(Pair response) {
+
     }
 }
