@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="16dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="8dp"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/vaccine_list_header"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#907886"
+        android:textAlignment="center"
+        android:text="Parents"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:paddingTop="10dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_guardian"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>

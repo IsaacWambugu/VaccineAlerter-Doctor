@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.activites.ChildActivity;
 import com.example.vaccine_alerter_doctor.activites.GuardianActivity;
-import com.example.vaccine_alerter_doctor.activites.VaccinationActivity;
+import com.example.vaccine_alerter_doctor.activites.ChildrenListActivity;
 import com.example.vaccine_alerter_doctor.models.MenuModel;
 import java.util.ArrayList;
 
@@ -74,7 +74,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.ViewHolder>{
 
                 switch(option){
                     case 0:
-                       intent = new Intent(context, VaccinationActivity.class);
+                       intent = new Intent(context, ChildrenListActivity.class);
                        intent.putExtra("title",title);
                     break;
 

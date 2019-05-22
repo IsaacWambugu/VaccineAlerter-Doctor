@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.vaccine_alerter_client.MainActivity">
         <item
+            android:id="@+id/add_vaccine"
+            android:icon="@drawable/ic_add_circle_outline"
+            android:title="Add Vaccine"
+            app:showAsAction="ifRoom"/>
+        <item
             android:id="@+id/edit_child"
             android:icon="@drawable/ic_mode_edit"
             android:title="Edit Child"
             app:showAsAction="ifRoom"/>
+
 </menu>

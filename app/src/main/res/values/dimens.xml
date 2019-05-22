@@ -58,4 +58,14 @@
     <dimen name="md_title_frame_margin_bottom_less">6dp</dimen>
     <dimen name="md_title_textsize">20sp</dimen>
 
+    <!--cardview_child_profile -->
+    <dimen name="pad_prof">10sp</dimen>
+
+
+    <!--activity_login-->
+    <dimen name="text_side_padding">20dp</dimen>
+
+    <!--cardview_child_profile-->
+    <dimen name="left_prof_padding">10dp</dimen>
+
 </resources>

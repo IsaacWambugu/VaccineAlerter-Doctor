@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class VaccinationActivity extends AppCompatActivity implements LoadContentListener {
+public class ChildrenListActivity extends AppCompatActivity implements LoadContentListener {
 
     private Boolean   isFABOpen = false;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -79,7 +79,7 @@ public class VaccinationActivity extends AppCompatActivity implements LoadConten
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_launcher_foreground);
+       // actionbar.setHomeAsUpIndicator(R.drawable.ic_dehaze);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override

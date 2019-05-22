@@ -1,10 +1,13 @@
 package com.example.vaccine_alerter_doctor.activites;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,12 +17,14 @@ import com.example.vaccine_alerter_doctor.data.PreferenceManager;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class LoginActivity extends AppCompatActivity implements LoadContentListener {
 
@@ -27,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
     private Button loginButton;
     private View rootView;
     private ProgressBar login_progressBar;
+    private SpinKitView spinKitView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +43,14 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
     }
     private void setUIConfig(){
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_login);
+        toolbar.setTitle("Login");
+
+        spinKitView = (SpinKitView) findViewById(R.id.login_spin_kit);
         rootView = (View) findViewById(R.id.view_activity_login);
         id_text = (TextView) findViewById(R.id.id_text);
         password_text = (TextView) findViewById(R.id.password_text);
         loginButton = (Button) findViewById(R.id.button_login);
-        login_progressBar = (ProgressBar)findViewById(R.id.login_progress_bar);
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,7 +60,8 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
 
                 logInId = id_text.getText().toString();
                 logInPassword = password_text.getText().toString();
-
+                ((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE))
+                        .toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                 if(logInId == "" || logInPassword == ""){
 
                     showSnackBar("Fill in all fields and try again");
@@ -80,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
     }
     private void confirmLoginCredentials(String id, String password){
 
-        login_progressBar.setVisibility(View.VISIBLE);
+        spinKitView.setVisibility(View.VISIBLE);
         loginButton.setVisibility(View.INVISIBLE);
 
         new NetWorker().userLoginRequest(LoginActivity.this, id, password);
@@ -112,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
         }
 
         saveDoctorDetails(id, names, gender, phoneNo, apiKey);
-        Intent intent = new Intent(LoginActivity.this, VaccinationActivity.class);
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
 
     }
@@ -120,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
     @Override
     public void onLoadErrorResponse(Pair response) {
 
-        login_progressBar.setVisibility(View.GONE);
+        spinKitView.setVisibility(View.GONE);
         loginButton.setVisibility(View.VISIBLE);
         showSnackBar(response.second.toString());
     }

@@ -3,9 +3,11 @@
     <string name="action_settings">Settings</string>
 
 
+    <!--activity_login -->
+    <string name="btn_login">Login</string>
+
     <!---Global-->
     <string name="ok">OKAY</string>
-
 
     <!--  Into Activity -->
     <string name="input_id">Id number</string>
@@ -37,4 +39,11 @@
 
     </string-array>
 
+    <!--cardview_child_profile -->
+    <string name="child_profile">Child Profile</string>
+    <!--cardview_guardian_profile -->
+    <string name="guardian_profile">Guardian Profile</string>
+
+    <!--dialog_add_vaccine -->
+    <string name="add_vaccine">Select Vaccine</string>
 </resources>

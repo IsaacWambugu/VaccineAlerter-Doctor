@@ -1,6 +1,5 @@
 package com.example.vaccine_alerter_doctor.activites;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.adapters.MenuAdapter;
@@ -21,14 +18,12 @@ import com.example.vaccine_alerter_doctor.data.PreferenceManager;
 import com.example.vaccine_alerter_doctor.models.MenuModel;
 import com.example.vaccine_alerter_doctor.util.SpanningLinearLayoutManager;
 import com.google.android.material.navigation.NavigationView;
-
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
-
     private ArrayList<MenuModel> listMenu;
     private MenuModel menuModel;
     private MenuAdapter menuAdapter;
@@ -97,13 +92,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.bringToFront();
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         toolbar.setTitle("Home");
-        toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.setSubtitleTextColor(Color.WHITE);
+       // toolbar.setTitleTextColor(Color.WHITE);
+       // toolbar.setSubtitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_launcher_foreground);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_dehaze);
 
         listMenu = new ArrayList<>();
         for(int i = 0 ; i < titles.length; i++){
@@ -125,4 +120,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         preferenceManager.setDoctorName(null);
 
     }
+
+    @Override
+    public void onBackPressed()
+    {
+
+    }
+
 }

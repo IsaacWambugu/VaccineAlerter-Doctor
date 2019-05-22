@@ -6,74 +6,74 @@ import java.util.Map;
 public class ChildModel {
 
     private int id;
-    private String firstName;
-    private String lastName;
-    private String gender;
-    private Integer opv1Due;
-    private Integer bcg1Due;
-    private Integer hepB1Due;
-    private Integer dpt1Due;
-    private Integer hibB1Due;
-    private Integer hepB2Due;
-    private Integer opv2Due;
-    private Integer pneuDue;
-    private Integer rota1Due;
-    private Integer dpt2Due;
-    private Integer hibB2Due;
-    private Integer hepB3Due;
-    private Integer opv3Due;
-    private Integer vitA1Due;
-    private Integer rota2Due;
-    private Integer vitA2Due;
-    private Integer measlesDue;
-    private Integer yellowDue;
+    private String firstName,
+            lastName,
+            gender;
+    private Integer opv1Due,
+            bcg1Due,
+            hepB1Due,
+            dpt1Due,
+            hibB1Due,
+            hepB2Due,
+            opv2Due,
+            pneuDue,
+            rota1Due,
+            dpt2Due,
+            hibB2Due,
+            hepB3Due,
+            opv3Due,
+            vitA1Due,
+            rota2Due,
+            vitA2Due,
+            measlesDue,
+            yellowDue;
     private Boolean vaccineDue;
 
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 
-    public ChildModel(int id, String firstName, String  lastName, String gender,
+    public ChildModel(int id, String firstName, String lastName, String gender,
                       int opv1Due, int bcg1Due, int hepB1Due, int dpt1Due, int hibB1Due, int hepB2Due,
                       int opv2Due, int pneuDue, int rota1Due, int dpt2Due, int hibB2Due, int hepB3Due,
                       int opv3Due, int vitA1Due, int rota2Due, int vitA2Due, int measlesDue, int yellowDue,
                       Boolean vaccineDue
-    ){
+    ) {
 
-        this.id        = id;
+        this.id = id;
         this.firstName = firstName;
-        this.lastName  = lastName;
-        this.gender    = gender;
+        this.lastName = lastName;
+        this.gender = gender;
 
-        this.opv1Due   = opv1Due;
-        this.bcg1Due   = bcg1Due;
-        this.hepB1Due  = hepB1Due;
+        this.opv1Due = opv1Due;
+        this.bcg1Due = bcg1Due;
+        this.hepB1Due = hepB1Due;
 
-        this.dpt1Due   = dpt1Due;
-        this.hibB1Due  = hibB1Due;
-        this.hepB2Due  = hepB2Due;
+        this.dpt1Due = dpt1Due;
+        this.hibB1Due = hibB1Due;
+        this.hepB2Due = hepB2Due;
 
-        this.opv2Due   = opv2Due;
-        this.pneuDue   = pneuDue;
-        this.rota1Due  = rota1Due;
+        this.opv2Due = opv2Due;
+        this.pneuDue = pneuDue;
+        this.rota1Due = rota1Due;
 
-        this.dpt2Due   = dpt2Due;
-        this.hibB2Due  = hibB2Due;
-        this.hepB3Due  = hepB3Due;
+        this.dpt2Due = dpt2Due;
+        this.hibB2Due = hibB2Due;
+        this.hepB3Due = hepB3Due;
 
-        this.opv3Due   = opv3Due;
-        this.vitA1Due  = vitA1Due;
-        this.rota2Due  = rota2Due;
+        this.opv3Due = opv3Due;
+        this.vitA1Due = vitA1Due;
+        this.rota2Due = rota2Due;
 
-        this.vitA2Due  = vitA2Due;
-        this.measlesDue= measlesDue;
+        this.vitA2Due = vitA2Due;
+        this.measlesDue = measlesDue;
         this.yellowDue = yellowDue;
 
         this.vaccineDue = vaccineDue;
 
-
     }
-    public int getId(){
-        return  id;
+
+    public int getId() {
+        return id;
     }
 
     public String getFirstName() {
@@ -159,8 +159,9 @@ public class ChildModel {
     public Integer getYellowDue() {
         return yellowDue;
     }
+
     public Boolean getVaccineDue() {
-        return  vaccineDue;
+        return vaccineDue;
     }
 
 
