@@ -82,10 +82,10 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
         d_o_b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Calendar cldr = Calendar.getInstance();
-                int day = cldr.get(Calendar.DAY_OF_MONTH);
-                int month = cldr.get(Calendar.MONTH);
-                int year = cldr.get(Calendar.YEAR);
+                final Calendar calendar = Calendar.getInstance();
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int month = calendar.get(Calendar.MONTH);
+                int year = calendar.get(Calendar.YEAR);
                 // date picker dialog
                 picker = new DatePickerDialog(GuardianActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
@@ -234,7 +234,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
     private void fetchGuardianDetails(String id) {
 
-        new NetWorker().loadGuardianDetails(GuardianActivity.this, id);
+        new NetWorker().loadDetails(GuardianActivity.this, 1, id);
     }
 
     @Override

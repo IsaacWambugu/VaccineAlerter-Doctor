@@ -33,7 +33,8 @@
     <string name="nav_log">Log Out</string>
 
     <!-- ChildActivity-->
-    <string-array name="pizzaSize">
+    <string-array name="genders_list">
+        <item>Select Gender</item>
         <item>Male</item>
         <item>Female</item>
 
@@ -46,4 +47,18 @@
 
     <!--dialog_add_vaccine -->
     <string name="add_vaccine">Select Vaccine</string>
+
+    <!--child_layout-->
+    <string name="guardian_id_hint">Guardian Id e.g 30000</string>
+    <string name="first_name_hint">First Name e.g Jane</string>
+    <string name="last_name_hint">Last Name e.g Doe</string>
+    <string name="dob_hit">Enter Date of Birth</string>
+
+
+    <!-- home_activity-->
+    <string name="home_check">Check Children</string>
+    <string name="home_add_child">Add Children</string>
+    <string name="home_edit_child">Edit Children</string>
+    <string name="home_add_guardian">Add Guardian</string>
+    <string name="home_edit_guardian">Edit Guardian</string>
 </resources>

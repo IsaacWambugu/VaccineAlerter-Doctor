@@ -1,37 +1,57 @@
 package com.example.vaccine_alerter_doctor.activites;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.example.vaccine_alerter_doctor.R;
+import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
+import com.example.vaccine_alerter_doctor.interfaces.MultiSpinnerListener;
 import com.example.vaccine_alerter_doctor.interfaces.UploadContentListener;
+import com.example.vaccine_alerter_doctor.network.Mtandao;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
+import com.example.vaccine_alerter_doctor.util.MultiSpinner;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.ArrayList;
 import java.util.Calendar;
-
+import java.util.LinkedHashMap;
+import java.util.List;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-public class ChildActivity extends AppCompatActivity implements LoadContentListener,IdCheckerListener, UploadContentListener {
+public class ChildActivity extends AppCompatActivity implements LoadContentListener, IdCheckerListener, UploadContentListener {
 
-    private TextView guard_id, f_name, l_name, d_o_b;
+    private TextView guard_id,
+            f_name,
+            l_name,
+            d_o_b,
+            gender_item,
+            message;
+    private List<Integer> adminVaccineIndex = new ArrayList<>();
+    private String vaccines = "";
     private Button add_btn;
     private View rootView;
     private SpinKitView spinKitView;
@@ -40,6 +60,16 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     private int action;
     private SpinKitView dialogSpinKitView;
     private AlertDialog alertDialog;
+    private MultiSpinner simpleSpinner;
+    private Toolbar toolbar;
+    private String[] genderList = {
+            "Select Gender",
+            "Male",
+            "Female"
+    };
+    private String selectedVaccines = "";
+    private String childId = "";
+    private LinkedHashMap<String, Boolean> linkedVaccine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +78,15 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         setContentView(R.layout.activity_child);
         setUIConfig();
 
-    }
-    private void setUIConfig(){
+        if (action == 2) {
+            showChildIdDialog();
+        }
 
+    }
+
+    private void setUIConfig() {
+
+        gender_item = (TextView) findViewById(R.id.spinner_item);
         rootView = (View) findViewById(R.id.view_activity_add_child);
         guard_id = (TextView) findViewById(R.id.textChildGId);
         f_name = (TextView) findViewById(R.id.textChildFName);
@@ -58,8 +94,82 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         d_o_b = (TextView) findViewById(R.id.textChildDOB);
         gender_spin = (Spinner) findViewById(R.id.child_gender);
         add_btn = (Button) findViewById(R.id.add_child_btn);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_child);
+        simpleSpinner = (MultiSpinner) findViewById(R.id.child_vaccine_spinner);
         spinKitView = (SpinKitView) findViewById(R.id.child_spin_kit);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_child);
 
+        if (action == 1) {
+            toolbar.setTitle("Add Child");
+            add_btn.setText("Add");
+
+        } else if (action == 2) {
+            toolbar.setTitle("Edit Child");
+            add_btn.setText("Update");
+            guard_id.setVisibility(View.GONE);
+
+        } else {
+
+            moveToHomeActivity();
+        }
+
+        try {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        } catch (NullPointerException npE) {
+
+            moveToHomeActivity();
+        }
+
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this, R.layout.spinner_item, genderList) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+                    // Set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_item);
+        gender_spin.setAdapter(spinnerArrayAdapter);
+
+        gender_spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItemText = (String) parent.getItemAtPosition(position);
+
+                if (position > 0) {
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
+                    Toast.makeText
+                            (getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         d_o_b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,21 +182,38 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                d_o_b.setText(year+"-"+ (monthOfYear + 1)+"-"+ dayOfMonth);
+                                d_o_b.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
                             }
                         }, year, month, day);
                 picker.show();
             }
         });
+
+        linkedVaccine = new LinkedHashMap<>();
+
+        for (int i = 0; i < Const.VACCINE_LIST.length; i++) {
+
+            linkedVaccine.put(Const.VACCINE_LIST[i], false);
+        }
+
+        setVaccineSpinner(linkedVaccine);
+
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String guardianId  = guard_id.getText().toString();
-                String fName    = f_name.getText().toString();
-                String lName    = l_name.getText().toString();
-                String dOB      = d_o_b.getText().toString();
-                String gender   = gender_spin.getSelectedItem().toString();
+                hideKeyBoard();
+                String id = "";
+
+                if (action == 1)
+                  id = guard_id.getText().toString();
+                else if(action == 2)
+                    id = childId;
+
+                String fName = f_name.getText().toString();
+                String lName = l_name.getText().toString();
+                String dOB = d_o_b.getText().toString();
+                String gender = gender_spin.getSelectedItem().toString();
 
                 if (fName.isEmpty() || fName.length() == 0 || fName == null || lName.isEmpty() || lName.length() == 0 || lName == null) {
 
@@ -96,33 +223,24 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
                     showSnackBar("Enter Date of Birth");
 
-                } else if (guardianId.isEmpty() || guardianId.length() == 0 || guardianId == null) {
+                } else if (id.isEmpty() || id.length() == 0 || id == null) {
 
                     showSnackBar("Invalid Guardian ID");
 
-                } else if (gender.isEmpty() || gender.length() == 0 || gender == null) {
+                } else if (gender.equals("Select Gender")) {
 
                     showSnackBar("Select the child's gender");
 
                 } else {
 
-                    uploadToChildToServer(guardianId, fName, lName, dOB, gender);
+                    uploadChildToServer(id, fName, lName, dOB, gender, selectedVaccines);
+
+
                 }
             }
         });
-
-        if (action == 0) {
-
-            add_btn.setText("Add");
-        } else if (action == 1) {
-
-            add_btn.setText("Update");
-            showChildIdDialog();
-            //spinKitView.setVisibility(View.VISIBLE);
-
-        }
-
     }
+
     private void getIncomingIntent(Bundle savedInstanceState) {
 
         if (savedInstanceState == null) {
@@ -133,114 +251,200 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
             } else {
 
-                action = extras.getInt("action");
+                action = extras.getInt("option");
 
             }
         } else {
 
-            action = (int) savedInstanceState.getSerializable("action");
+            action = (int) savedInstanceState.getSerializable("option");
 
         }
 
     }
-    private void showSnackBar(String msg){
 
-            Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+    private void showSnackBar(String msg) {
 
-                        }
-                    }).show();
+        Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG)
+                .setActionTextColor(Color.RED)
+                .setAction(R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }).show();
     }
 
-    private void fetchGuardianDetails(String id) {
+    private void fetchChildDetails(String id) {
 
-        new NetWorker().loadGuardianDetails(ChildActivity.this, id);
+        new NetWorker().loadDetails(ChildActivity.this, 1, id);
     }
+
     private void displayFetchResults(JSONObject response) {
+
+
         try {
 
-            guard_id.setText(String.valueOf(response.getInt("guardian_id")));
-            f_name.setText(response.getJSONObject("details").getString("fname"));
-            l_name.setText(response.getJSONObject("details").getString("lname"));
+            // guard_id.setText(String.valueOf(response.getInt("guardian_id")));
+            String names[] = response.getJSONObject("details").getString("name").split(" ", 2);
+            int[] vaccines = new int[18];
+            f_name.setText(names[0]);
+            l_name.setText(names[1]);
             d_o_b.setText(response.getJSONObject("details").getString("dob"));
             String gender = response.getJSONObject("details").getString("gender");
+            childId = String.valueOf(response.getJSONObject("details").getInt("id"));
 
-            if(gender  == "Male"){
+
+            if (gender == "Male") {
                 gender_spin.setSelection(0);
-            }else{
+            } else {
                 gender_spin.setSelection(1);
             }
 
+            vaccines[0] = response.getJSONObject("vaccines").getJSONObject("OPV1").getInt("administered");
+            vaccines[1] = response.getJSONObject("vaccines").getJSONObject("BCG1").getInt("administered");
+            vaccines[2] = response.getJSONObject("vaccines").getJSONObject("HEPB1").getInt("administered");
+            vaccines[3] = response.getJSONObject("vaccines").getJSONObject("DPT1").getInt("administered");
+            vaccines[4] = response.getJSONObject("vaccines").getJSONObject("HIBB1").getInt("administered");
+            vaccines[5] = response.getJSONObject("vaccines").getJSONObject("HEPB2").getInt("administered");
+            vaccines[6] = response.getJSONObject("vaccines").getJSONObject("OPV2").getInt("administered");
+            vaccines[7] = response.getJSONObject("vaccines").getJSONObject("PNEU").getInt("administered");
+            vaccines[8] = response.getJSONObject("vaccines").getJSONObject("ROTA1").getInt("administered");
+            vaccines[9] = response.getJSONObject("vaccines").getJSONObject("DPT2").getInt("administered");
+            vaccines[10] = response.getJSONObject("vaccines").getJSONObject("HIBB2").getInt("administered");
+            vaccines[11] = response.getJSONObject("vaccines").getJSONObject("HEPB3").getInt("administered");
+            vaccines[12] = response.getJSONObject("vaccines").getJSONObject("OPV3").getInt("administered");
+            vaccines[13] = response.getJSONObject("vaccines").getJSONObject("VITA1").getInt("administered");
+            vaccines[14] = response.getJSONObject("vaccines").getJSONObject("VOTA2").getInt("administered");
+            vaccines[15] = response.getJSONObject("vaccines").getJSONObject("VITA2").getInt("administered");
+            vaccines[16] = response.getJSONObject("vaccines").getJSONObject("MEAS").getInt("administered");
+            vaccines[17] = response.getJSONObject("vaccines").getJSONObject("YELLOW").getInt("administered");
+
+            linkedVaccine.clear();
+            List<String> vaccineList = new ArrayList<String>();
+            for (int i = 0; i < 18; i++) {
+
+                if (vaccines[i] == 1) {
+
+                    linkedVaccine.put(Const.VACCINE_LIST[i], true);
+                    vaccineList.add(Const.VACCINE_LIST[i]);
+                    adminVaccineIndex.add(i);
+
+                } else if (vaccines[i] == 0) {
+
+                    linkedVaccine.put(Const.VACCINE_LIST[i], false);
+                }
+            }
+
+            simpleSpinner.displayItems(vaccineList);
+            setVaccineSpinner(linkedVaccine);
+
+
         } catch (JSONException jsonE) {
-            showSnackBar("Something went wrong!");
-            moveToHomeActivity();
+
+            showSnackBar("Something went wrong! Try again later");
+
+            try {
+
+                Thread.sleep(2000);
+                moveToHomeActivity();
+            } catch (InterruptedException iE) {
+
+                moveToHomeActivity();
+
+            }
         }
     }
 
     @Override
     public void onValidResponse(JSONObject response) {
+        setUIConfig();
         displayFetchResults(response);
         alertDialog.dismiss();
     }
 
     public void onErrorResponse(Pair response) {
 
-       // dialogSpinKitView.setVisibility(View.GONE);
-        errorChecker(response);
+        errorChecker(0, response);
+        onLoadWaitComplete();
+
     }
 
-    private void uploadToChildToServer(String guardianId, String fName, String lName, String dOB,String gender){
+    private void uploadChildToServer(String id, String fName, String lName, String dOB, String gender, String vaccines) {
+        add_btn.setVisibility(View.GONE);
+        spinKitView.setVisibility(View.VISIBLE);
+        Log.d("----->Vaccines:", vaccines);
 
-           spinKitView.setVisibility(View.VISIBLE);
-           new NetWorker().uploadChild(ChildActivity.this,guardianId, fName, lName, dOB, gender);
+        if (action == 1)
+            new NetWorker().uploadChild(ChildActivity.this, 1, id, fName, lName, dOB, gender, vaccines);
+        if (action == 2)
+            new NetWorker().uploadChild(ChildActivity.this, 2, id, fName, lName, dOB, gender, vaccines);
+    }
 
-        }
     @Override
     public void onUploadValidResponse(JSONObject response) {
-        spinKitView.setVisibility(View.INVISIBLE);
-        showSnackBar("Guardian added Successfully");
-        // moveToHomeActivity();
+        onLoadWaitComplete();
+        showSnackBar("Changes accepted successfully");
+        new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+
+                moveToHomeActivity();
+            }
+        }.start();
+
     }
 
     @Override
     public void onUploadErrorResponse(Pair response) {
 
-        errorChecker(response);
-        spinKitView.setVisibility(View.INVISIBLE);
+        errorChecker(1, response);
+        onLoadWaitComplete();
 
     }
-    private void errorChecker(Pair response){
+    private void errorChecker(int type, Pair response) {
 
         int code = (int) response.first;
         String msg = response.second.toString();
 
-        switch (code){
+        switch (code) {
 
-            case 1:
-                showSnackBar(msg);
-                break;
             case 2:
                 startActivity(new Intent(ChildActivity.this, LoginActivity.class));
                 break;
             case 3:
-                showSnackBar(msg);
-                moveToHomeActivity();
+                responseAlerter(2, msg);
                 break;
-            case 4:
-                showSnackBar(msg);
-                break;
-            case 5:
+
+            default:
+                responseAlerter(type, msg);
                 break;
 
         }
 
     }
+
+    private void responseAlerter(int type, String msg) {
+
+        if (type == 0) {
+            message.setText(msg);
+            message.setVisibility(View.VISIBLE);
+        } else if (type == 1)
+            showSnackBar(msg);
+        else if (type == 2) {
+            showSnackBar(msg);
+            moveToHomeActivity();
+        }
+    }
+
     private void moveToHomeActivity() {
 
         startActivity(new Intent(this, HomeActivity.class));
     }
+
     private void showChildIdDialog() {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -249,10 +453,11 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         View dialogView = inflater.inflate(R.layout.dialog_child_id, null);
         dialogBuilder.setView(dialogView);
 
-        dialogSpinKitView = dialogView.findViewById(R.id.child_spin_kit);
+        dialogSpinKitView = dialogView.findViewById(R.id.dialog_child_spin_kit);
         Button cancelButton = (Button) dialogView.findViewById(R.id.child_dialog_cancel);
         Button proceedButton = (Button) dialogView.findViewById(R.id.child_dialog_proceed);
         final EditText editText = (EditText) dialogView.findViewById(R.id.text_child_id);
+        message = (TextView) dialogView.findViewById(R.id.text_child_id_alert);
         alertDialog = dialogBuilder.create();
         alertDialog.setCancelable(false);
         alertDialog.show();
@@ -268,13 +473,29 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         proceedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialogSpinKitView.setVisibility(View.GONE);
+                message.setVisibility(View.GONE);
                 String id = editText.getText().toString();
-                dialogSpinKitView.setVisibility(View.VISIBLE);
-                fetchGuardianDetails(id);
+                if (id.isEmpty() || id.length() == 0 || id == null) {
+
+                    message.setText("Invalid Guardian ID");
+                    message.setVisibility(View.VISIBLE);
+
+                } else if (!Mtandao.checkInternet(getApplicationContext())) {
+
+                    showSnackBar("Check Internet Connection and try again");
+
+                } else {
+
+                    dialogSpinKitView.setVisibility(View.VISIBLE);
+                    fetchChildDetails(id);
+
+                }
             }
 
         });
     }
+
     private void goToPreviousActivity() {
 
         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
@@ -289,8 +510,71 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
     @Override
     public void onLoadErrorResponse(Pair response) {
+        onLoadWaitComplete();
+        errorChecker(1, response);
+    }
+
+    private void onLoadWaitComplete() {
+        if (action == 2)
+            dialogSpinKitView.setVisibility(View.GONE);
 
         spinKitView.setVisibility(View.INVISIBLE);
-        errorChecker(response);
+        add_btn.setVisibility(View.VISIBLE);
+
+    }
+
+    private void setVaccineSpinner(LinkedHashMap vaccines) {
+
+
+        simpleSpinner.setItems(vaccines, new MultiSpinnerListener() {
+
+            @Override
+            public void onItemsSelected(boolean[] selected) {
+
+                selectedVaccines = "";
+                List<Integer> positions = new ArrayList<>();
+
+
+                for (int i = 0; i < selected.length; i++) {
+
+                    if (selected[i]) {
+                        positions.add(i);
+
+                    }
+                }
+
+                if (action == 2) {
+
+                    if (!(positions.size() == 0)) {
+
+                        for (int x : adminVaccineIndex) {
+
+                            positions.remove(Integer.valueOf(x));
+                        }
+
+                        int count = 0;
+
+                        for (int x : positions) {
+
+                            if (count == 0)
+                                selectedVaccines = selectedVaccines.concat(Const.VACCINE_LIST[x]);
+                            else
+                                selectedVaccines = selectedVaccines.concat("#" + Const.VACCINE_LIST[x]);
+
+                            count++;
+
+                        }
+
+                    }
+
+                }
+            }
+        });
+    }
+    private void hideKeyBoard(){
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 }

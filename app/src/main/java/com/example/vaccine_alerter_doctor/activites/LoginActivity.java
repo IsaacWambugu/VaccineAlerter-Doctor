@@ -2,6 +2,7 @@ package com.example.vaccine_alerter_doctor.activites;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -31,7 +32,6 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
     private TextView id_text,password_text;
     private Button loginButton;
     private View rootView;
-    private ProgressBar login_progressBar;
     private SpinKitView spinKitView;
 
     @Override
@@ -45,7 +45,6 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_login);
         toolbar.setTitle("Login");
-
         spinKitView = (SpinKitView) findViewById(R.id.login_spin_kit);
         rootView = (View) findViewById(R.id.view_activity_login);
         id_text = (TextView) findViewById(R.id.id_text);
@@ -136,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
 
     public void showSnackBar(String msg){
 
-        Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG)
+        Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG).setActionTextColor(Color.RED)
                 .setAction(R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

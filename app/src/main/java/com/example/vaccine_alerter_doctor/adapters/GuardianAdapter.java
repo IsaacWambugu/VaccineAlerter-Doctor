@@ -1,22 +1,23 @@
 package com.example.vaccine_alerter_doctor.adapters;
 
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.models.GuardianModel;
+
 import java.util.ArrayList;
 
 public class GuardianAdapter extends RecyclerView.Adapter<GuardianAdapter.ViewHolder> {
@@ -30,6 +31,7 @@ public class GuardianAdapter extends RecyclerView.Adapter<GuardianAdapter.ViewHo
         private TextView gender;
         private Button callButton;
         private TextView id;
+        private ImageView guardianPic;
 
         public ViewHolder(View v) {
             super(v);
@@ -38,7 +40,7 @@ public class GuardianAdapter extends RecyclerView.Adapter<GuardianAdapter.ViewHo
             gender = v.findViewById(R.id.guardian_gender_row);
             id = v.findViewById(R.id.guardian_id_row);
             name = v.findViewById(R.id.guardian_name_row);
-
+            guardianPic = v.findViewById(R.id.guardian_image);
         }
     }
 
@@ -47,26 +49,43 @@ public class GuardianAdapter extends RecyclerView.Adapter<GuardianAdapter.ViewHo
         this.list = data;
         this.context = context;
     }
+
     @Override
     public GuardianAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view  = LayoutInflater.from(parent.getContext()).inflate(R.layout.guardian_list_row,parent,false);
-
-        return  new GuardianAdapter.ViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.guardian_list_row, parent, false);
+        return new GuardianAdapter.ViewHolder(view);
 
     }
 
     @Override
     public void onBindViewHolder(GuardianAdapter.ViewHolder holder, int position) {
-        final GuardianModel guardianModelHolder  = list.get(position);
+        final GuardianModel guardianModelHolder = list.get(position);
         holder.gender.setText(guardianModelHolder.getGender());
         holder.id.setText(guardianModelHolder.getId());
-        holder.callButton.setOnClickListener(new View.OnClickListener(){
+
+        //set the gender icon
+
+        if (guardianModelHolder.getGender().equals("Male")) {
+
+            holder.guardianPic.setBackground(ResourcesCompat.getDrawable(context.getResources(),
+                    R.drawable.ic_male,
+                    null));
+
+        } else if (guardianModelHolder.getGender().equals("Female")) {
+
+            holder.guardianPic.setBackground(ResourcesCompat.getDrawable(context.getResources(),
+                    R.drawable.ic_female,
+                    null));
+
+        }
+
+        holder.callButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + guardianModelHolder.getNumber()));
+                intent.setData(Uri.parse("tel:" +"+254"+ guardianModelHolder.getNumber()));
                 if (intent.resolveActivity(context.getPackageManager()) != null) {
                     context.startActivity(intent);
                 }

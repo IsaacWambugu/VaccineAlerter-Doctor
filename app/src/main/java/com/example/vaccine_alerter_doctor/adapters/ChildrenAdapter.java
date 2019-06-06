@@ -27,8 +27,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView gender_view,
-                first_name_view,
-                last_name_view,
+                name_view,
                 icon,
                 id_view;
         ImageView icon_profile;
@@ -38,8 +37,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
             super(v);
 
             gender_view = (TextView) v.findViewById(R.id.list_gender);
-            first_name_view = (TextView) v.findViewById(R.id.list_first_name);
-            last_name_view = (TextView) v.findViewById(R.id.list_last_name);
+            name_view = (TextView) v.findViewById(R.id.list_name);
             icon = (TextView) v.findViewById(R.id.icon_text);
             icon_profile = (ImageView) v.findViewById(R.id.icon_profile);
             child_row_layout = (RelativeLayout) v.findViewById(R.id.children_list_layout);
@@ -70,15 +68,15 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
 
         String firstName = childrenModelHolder.getFirstName();
         String lastName = childrenModelHolder.getLastName();
+        String combinedName  =  firstName + " "+ lastName;
         String initials = firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
         final String id  = String.valueOf(childrenModelHolder.getId());
-
+        String displayId = "#"+id;
 
         holder.gender_view.setText(childrenModelHolder.getGender());
-        holder.first_name_view.setText(firstName);
-        holder.last_name_view.setText(lastName);
+        holder.name_view.setText(combinedName);
         holder.icon.setText(initials);
-        holder.id_view.setText(id);
+        holder.id_view.setText(displayId );
         if (childrenModelHolder.getVaccineDue()) {
 
             holder.icon_profile.setBackgroundResource(R.drawable.bg_red_circle);

@@ -16,7 +16,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -29,24 +30,27 @@
                 android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
-                android:padding="40dp" />
+                android:padding="60dp" />
 
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
+                android:paddingBottom="20dp"
                 >
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:id="@+id/guardian_id_row"
+                    android:textColor="@color/black"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="@dimen/pad_prof"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
+                    android:textColor="@color/black"
                     android:id="@+id/guardian_name_row"
                     android:layout_marginTop="10dp"
                     android:paddingLeft="@dimen/pad_prof"/>
@@ -54,6 +58,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
+                    android:textColor="@color/black"
                     android:id="@+id/guardian_gender_row"
                     android:layout_marginTop="5dp"
                     android:paddingLeft="@dimen/pad_prof"
@@ -70,6 +75,7 @@
             android:background="#058521"
             android:layout_marginEnd="10dp"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

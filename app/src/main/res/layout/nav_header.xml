@@ -9,22 +9,16 @@
     android:gravity="bottom">
 
     <TextView
+        style="@style/nav_header_text"
         android:id="@+id/nav_names"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My header title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:text="My header title"/>
     <TextView
+        style="@style/nav_header_text"
         android:id="@+id/nav_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="My header title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        />
     <TextView
+        style="@style/nav_header_text"
         android:id="@+id/nav_gender"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My header title"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-
+        android:text="My header title"/>
 </LinearLayout>

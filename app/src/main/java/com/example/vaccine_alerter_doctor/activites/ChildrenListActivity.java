@@ -110,37 +110,6 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
         recyclerView.setAdapter(childrenAdapter);
 
 
-/*
-        sitesData       = new ArrayList<>();
-        sitesAdapter    = new SitesAdapter(sitesData,SiteListActivity.this, addStatus);
-        recyclerView    = (RecyclerView) findViewById(R.id.rental_list_recycler_view);
-
-        Configuration orientation = new Configuration();
-
-        if(this.recyclerView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        } else if (this.recyclerView.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        }
-
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(sitesAdapter);
-
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener() {
-            @Override
-            public void onLoadMore() {
-
-                Log.d("Paginating--->","Please wait");
-                progressBar.setVisibility(View.VISIBLE);
-                if(!addStatus && !endPagination) {
-
-                    loadSiteData();
-                }
-
-            }
-        });
-        */
-
     }
 
     private void loadChildren() {
@@ -248,13 +217,11 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
             }
 
-            Log.d("Children------->", childrenList.toString());
         } catch (JSONException jsonE) {
 
 
             Log.d("Err---->", jsonE.toString());
         }
-
 
     }
 

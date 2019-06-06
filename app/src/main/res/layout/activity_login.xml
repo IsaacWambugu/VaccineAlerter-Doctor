@@ -10,51 +10,22 @@
         android:id="@+id/toolbar_login"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ti_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/img_logo"
-        android:layout_marginLeft="@dimen/text_side_padding"
-        android:layout_marginRight="@dimen/text_side_padding"
-        android:layout_marginTop="10dp">
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
         <EditText
             android:id="@+id/id_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/editText"
             android:drawableRight="@drawable/ic_id"
             android:hint="ID number"
             android:inputType="number" />
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ti_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ti_email"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="@dimen/text_side_padding"
-        android:layout_marginRight="@dimen/text_side_padding"
-
-        app:passwordToggleTint="@android:color/white">
-
         <EditText
             android:id="@+id/password_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/editText"
             android:hint="Password"
             android:drawableEnd="@drawable/ic_password"
             android:inputType="textPassword" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
 
         <com.github.ybq.android.spinkit.SpinKitView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -71,13 +42,7 @@
             app:SpinKit_Color="@color/colorAccent" />
         <Button
             android:id="@+id/button_login"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/view_child_linear"
-            android:layout_marginLeft="@dimen/text_side_padding"
-            android:layout_marginRight="@dimen/text_side_padding"
-            android:layout_marginTop="20dp"
-            android:background="#000"
             android:text="@string/btn_login"
-            android:textColor="#FFFFFFFF" />
+            style="@style/page_button"
+           />
 </LinearLayout>

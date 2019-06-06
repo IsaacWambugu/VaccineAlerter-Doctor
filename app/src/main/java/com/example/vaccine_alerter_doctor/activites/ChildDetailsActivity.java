@@ -13,25 +13,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.androidbuts.multispinnerfilter.MultiSpinner;
-import com.androidbuts.multispinnerfilter.MultiSpinnerListener;
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.adapters.GuardianAdapter;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
+import com.example.vaccine_alerter_doctor.interfaces.MultiSpinnerListener;
 import com.example.vaccine_alerter_doctor.models.GuardianModel;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.others.MultipleSelectionSpinner;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
-import com.github.clans.fab.FloatingActionMenu;
+import com.example.vaccine_alerter_doctor.util.MultiSpinner;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -39,7 +35,6 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -69,80 +64,61 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             nineMAlert,
             bcg1_status;
 
-    private TextView dpt1_days;
-    private TextView dpt1_date;
-    private ImageView dpt1_status;
+    private TextView dpt1_days,
+            dpt1_date,
+            dpt2_days,
+            dpt2_date,
+            hepb1_days,
+            hepb1_date,
+            hepb2_days,
+            hepb2_date,
+            hepb3_days,
+            hepb3_date,
+            hib1_days,
+            hib1_date,
+            hib2_days,
+            hib2_date,
+            meas_days,
+            meas_date,
+            opv1_days,
+            opv1_date,
+            opv2_days,
+            opv2_date,
+            opv3_days,
+            opv3_date,
+            pneu_date,
+            pneu_days,
+            rota1_days,
+            rota1_date,
+            rota2_days,
+            rota2_date,
+            vitA1_days,
+            vitA1_date,
+            vitA2_days,
+            vitA2_date,
+            yellow_days,
+            yellow_date;
 
-    private TextView dpt2_days;
-    private TextView dpt2_date;
-    private ImageView dpt2_status;
-
-    private TextView hepb1_days;
-    private TextView hepb1_date;
-    private ImageView hepb1_status;
-
-    private TextView hepb2_days;
-    private TextView hepb2_date;
-    private ImageView hepb2_status;
-
-    private TextView hepb3_days;
-    private TextView hepb3_date;
-    private ImageView hepb3_status;
-
-    private TextView hib1_days;
-    private TextView hib1_date;
-    private ImageView hib1_status;
-
-    private TextView hib2_days;
-    private TextView hib2_date;
-    private ImageView hib2_status;
-
-    private TextView meas_days;
-    private TextView meas_date;
-    private ImageView meas_status;
-
-    private TextView opv1_days;
-    private TextView opv1_date;
-    private ImageView opv1_status;
-
-    private TextView opv2_days;
-    private TextView opv2_date;
-    private ImageView opv2_status;
-
-    private TextView opv3_days;
-    private TextView opv3_date;
-    private ImageView opv3_status;
-
-    private TextView pneu_days;
-    private TextView pneu_date;
-    private ImageView pneu_status;
-
-    private TextView rota1_days;
-    private TextView rota1_date;
-    private ImageView rota1_status;
-
-    private TextView rota2_days;
-    private TextView rota2_date;
-    private ImageView rota2_status;
-
-    private TextView vitA1_days;
-    private TextView vitA1_date;
-    private ImageView vitA1_status;
-
-    private TextView vitA2_days;
-    private TextView vitA2_date;
-    private ImageView vitA2_status;
-
-    private TextView yellow_days;
-    private TextView yellow_date;
-    private ImageView yellow_status,
+    private ImageView dpt2_status,
+            hepb1_status,
+            hepb2_status,
+            hepb3_status,
+            dpt1_status,
+            hib1_status,
+            hib2_status,
+            meas_status,
+            opv1_status,
+            opv2_status,
+            opv3_status,
+            pneu_status,
+            rota1_status,
+            rota2_status,
+            vitA1_status,
+            vitA2_status,
+            yellow_status,
             child_image;
     private LinearLayout activity_layout;
-
-
-    private FloatingActionMenu fab2, fab3, fab4, fab5;
     private AlertDialog alertDialog;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +132,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -166,11 +142,9 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
         int id = item.getItemId();
         if (id == R.id.edit_child) {
-
-            Log.d("----->", "Here");
             startActivity(new Intent(ChildDetailsActivity.this, ChildActivity.class).putExtra("option", 1));
             return true;
-        }else if(id ==R.id.add_vaccine){
+        } else if (id == R.id.add_vaccine) {
 
             showAddVaccineDialog();
         }
@@ -298,7 +272,6 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
                 android.R.color.holo_red_light);
 
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         guardianAdapter = new GuardianAdapter(ChildDetailsActivity.this, guardianList);
         recyclerView.setAdapter(guardianAdapter);
@@ -373,12 +346,12 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
                     R.drawable.ic_male,
                     null));
 
-            if(gender == "Male"){
+            if (gender == "Male") {
                 this.child_image.setBackground(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_male,
                         null));
 
-            }else if(gender  == "Female"){
+            } else if (gender == "Female") {
 
                 this.child_image.setBackground(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_female,
@@ -465,18 +438,15 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             String vitA1_date_admin = json.getJSONObject("vaccines").getJSONObject("VITA1").getString("date_administered");
             int vitA1_days = json.getJSONObject("vaccines").getJSONObject("VITA1").getInt("days");
 
-
             int rota2_due = json.getJSONObject("vaccines").getJSONObject("VOTA2").getInt("due");
             int rota2_admin = json.getJSONObject("vaccines").getJSONObject("VOTA2").getInt("administered");
             String rota2_date_admin = json.getJSONObject("vaccines").getJSONObject("VOTA2").getString("date_administered");
             int rota2_days = json.getJSONObject("vaccines").getJSONObject("VOTA2").getInt("days");
 
-
             int vitA2_due = json.getJSONObject("vaccines").getJSONObject("VITA2").getInt("due");
             int vitA2_admin = json.getJSONObject("vaccines").getJSONObject("VITA2").getInt("administered");
             String vitA2_date_admin = json.getJSONObject("vaccines").getJSONObject("VITA2").getString("date_administered");
             int vitA2_days = json.getJSONObject("vaccines").getJSONObject("VITA2").getInt("days");
-
 
             int measles_due = json.getJSONObject("vaccines").getJSONObject("MEAS").getInt("due");
             int measles_admin = json.getJSONObject("vaccines").getJSONObject("MEAS").getInt("administered");
@@ -504,12 +474,9 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
                                 guardianJsonArray.getJSONObject(i).getString("last_name"),
                                 guardianJsonArray.getJSONObject(i).getString("gender")
                         ));
-
             }
 
             //extract parents
-
-
             if (bcg1_due == 1) {
                 this.bcg1_status.setBackground(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_priority_high,
@@ -813,30 +780,33 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
                 //this.yellow_status.setText("");
             }
+
             //set expansion layout icon
             if (bcg1_due == 1 || opv1_due == 1 || hepB1_due == 1) {
 
                 showWarningAlertIcon(atBirthAlert);
 
-            } else if (dpt1_due == 1 || opv2_due == 1 || hepB2_due == 1 || hibB1_due == 1 || pneu_due == 1 || rota1_due == 1) {
+            }
+            if (dpt1_due == 1 || opv2_due == 1 || hepB2_due == 1 || hibB1_due == 1 || pneu_due == 1 || rota1_due == 1) {
 
                 showWarningAlertIcon(sixWAlert);
 
-            } else if (opv3_due == 1 || hepB3_due == 1 || dpt2_due == 1 || hibB2_due == 1 || vitA1_due == 1 || rota2_due == 1) {
+            }
+            if (opv3_due == 1 || hepB3_due == 1 || dpt2_due == 1 || hibB2_due == 1 || vitA1_due == 1 || rota2_due == 1) {
 
                 showWarningAlertIcon(fourteenWAlert);
 
-            } else if (vitA2_due == 1) {
+            }
+            if (vitA2_due == 1) {
                 showWarningAlertIcon(sixMAlert);
 
-            } else if (measles_due == 1) {
+            }
+            if (measles_due == 1 || yellow_due == 1) {
                 showWarningAlertIcon(nineMAlert);
 
             }
-
             //set child profile
             child_name.setText(name);
-            Log.d("------>", gender);
             child_gender.setText(gender);
             child_dob.setText(dob);
 
@@ -881,8 +851,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
         final LinkedHashMap<String, Boolean> linkedVaccine = new LinkedHashMap<>();
 
-        for(int i= 0; i < Const.VACCINE_LIST.length;i++ ){
-
+        for (int i = 0; i < Const.VACCINE_LIST.length; i++) {
 
             linkedVaccine.put(Const.VACCINE_LIST[i], false);
         }
@@ -895,9 +864,9 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             public void onItemsSelected(boolean[] selected) {
 
                 // your operation with code...
-                for(int i=0; i<selected.length; i++) {
-                    if(selected[i]) {
-                        Log.i("TAG", i + " : "+ linkedVaccine.get(i));
+                for (int i = 0; i < selected.length; i++) {
+                    if (selected[i]) {
+                        Log.i("TAG", i + " : " + linkedVaccine.get(i));
                     }
                 }
             }
@@ -919,13 +888,6 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
             }
         });
-        proceedButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-
-        });
-
     }
 }
+       

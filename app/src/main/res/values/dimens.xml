@@ -3,7 +3,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="padding_list_row">16dp</dimen>
     <dimen name="messages_padding_left">72dp</dimen>
-    <dimen name="icon_width_height">40dp</dimen>
+    <dimen name="icon_width_height">60dp</dimen>
     <dimen name="msg_text_primary">16sp</dimen>
     <dimen name="msg_text_secondary">14sp</dimen>
     <dimen name="icon_star">25dp</dimen>
@@ -61,11 +61,23 @@
     <!--cardview_child_profile -->
     <dimen name="pad_prof">10sp</dimen>
 
-
     <!--activity_login-->
     <dimen name="text_side_padding">20dp</dimen>
 
     <!--cardview_child_profile-->
     <dimen name="left_prof_padding">10dp</dimen>
 
+    <!--aa vaccine card views-->
+    <dimen name="vaccine_title_size">12sp</dimen>
+
+    <!--dialog_add_vaccine-->
+    <dimen name="add_left_right_margin">20dp</dimen>
+
+    <!--Universal -->
+    <dimen name="element_margin">10dp</dimen>
+    <!--Activity_Home-->
+    <dimen name="home_left_margin">100dp</dimen>
+    <dimen name="home_text_size">15sp</dimen>
+    <dimen name="home_right_margin">10dp</dimen>
+    <dimen name="edit_text_size">15sp</dimen>
 </resources>

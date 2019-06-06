@@ -3,6 +3,7 @@ package com.example.vaccine_alerter_doctor.network;
 import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
@@ -20,10 +21,10 @@ import com.example.vaccine_alerter_doctor.data.PreferenceManager;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
 import com.example.vaccine_alerter_doctor.interfaces.UploadContentListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,21 +44,18 @@ public class NetWorker {
         loadContentListener = (LoadContentListener) context;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, Const.GET_CHILDREN_URL + "33451647"+ "/0/30", null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, Const.GET_CHILDREN_URL + "33451647" + "/0/30", null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        Log.d("----->", response.toString());
                         loadContentListener.onLoadValidResponse(response);
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
 
-                        Log.d("----->", error.toString());
                         loadContentListener.onLoadErrorResponse(checkErrorResponse(error));
                     }
                 });
@@ -74,17 +72,13 @@ public class NetWorker {
 
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        Log.d("----->", response.toString());
                         loadContentListener.onLoadValidResponse(response);
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
 
-                        Log.d("----->", error.toString());
                         loadContentListener.onLoadErrorResponse(checkErrorResponse(error));
                     }
                 });
@@ -132,28 +126,35 @@ public class NetWorker {
         NetworkSingleton.getInstance(context).addToRequestQueue(postRequest);
     }
 
-    public void loadGuardianDetails(Context context, String guardianId) {
+    public void loadDetails(Context context, int check, String guardianId) {
 
         idCheckerListener = (IdCheckerListener) context;
+        String url = "";
 
-        Log.d("----->", "URL:" + Const.GET_GUARDIAN_DETAILS + guardianId);
+        switch (check) {
+            case 1:
+                url = Const.GET_CHILDREN_DETAILS_URL;
+                break;
+            case 2:
+                url = Const.GET_GUARDIAN_DETAILS_URL;
+                break;
+
+        }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, Const.GET_GUARDIAN_DETAILS + guardianId, null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, url + guardianId, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        Log.d("----->", response.toString());
+
                         idCheckerListener.onValidResponse(response);
                     }
                 }, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO: Handle error
 
-                        Log.d("----->", error.toString());
                         idCheckerListener.onErrorResponse(checkErrorResponse(error));
                     }
                 });
@@ -164,27 +165,42 @@ public class NetWorker {
 
     }
 
-    public void uploadChild(final Context context, String guardianId, String fName, String lName, String dOB, String gender) {
+    public void uploadChild(final Context context, int operation, String id, String fName, String lName, String dOB, String gender, String vaccines) {
 
+        int requestMethod = 0;
+        JSONObject jsonBodyObj = new JSONObject();
+        String url = "";
         uploadContentListener = (UploadContentListener) context;
 
-        JSONObject jsonBodyObj = new JSONObject();
+
+        if (operation == 1) {
+            requestMethod = Request.Method.POST;
+            url = Const.ADD_CHILD_URL;
+        } else if (operation == 2) {
+            requestMethod = Request.Method.PUT;
+            url = Const.CHILD_URL + id;
+        }
 
         try {
 
-            jsonBodyObj.put("doctor_id", new PreferenceManager(context).getDoctorId());
-            jsonBodyObj.put("guardian_id", guardianId);
+            if (operation == 1) {
+                jsonBodyObj.put("guardian_id", id);
+                jsonBodyObj.put("doctor_id", new PreferenceManager(context).getDoctorId());
+            }
+
             jsonBodyObj.put("first_name", fName);
             jsonBodyObj.put("last_name", lName);
             jsonBodyObj.put("date_of_birth", dOB);
             jsonBodyObj.put("gender", gender);
+            jsonBodyObj.put("vaccines", vaccines);
+
 
         } catch (JSONException e) {
 
             e.printStackTrace();
         }
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, Const.ADD_CHILD_URL, jsonBodyObj,
+        JsonObjectRequest postRequest = new JsonObjectRequest(requestMethod, url, jsonBodyObj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -239,7 +255,7 @@ public class NetWorker {
 
         // final String requestBody = jsonBodyObj.toString();
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, Const.ADD_GUARDIAN_DETAILS, jsonBodyObj,
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, Const.ADD_GUARDIAN_DETAILS_URL, jsonBodyObj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -277,6 +293,7 @@ public class NetWorker {
         NetworkResponse networkResponse = error.networkResponse;
         int code = 0;
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+
             code = 1;
             msg = "Check message Internet connection and try again";
         } else if (error instanceof AuthFailureError) {
@@ -288,15 +305,17 @@ public class NetWorker {
             if (statusCode == 404) {
                 code = 4;
                 try {
+
                     msg = new JSONObject(new String(error.networkResponse.data, "UTF-8")).getString("message");
 
-                }catch (JSONException jE){
-                    msg = "Check details and try again";msg = "Check details and try again";
-                }catch (java.io.UnsupportedEncodingException ioE){
+                } catch (JSONException jE) {
+                    msg = "Check details and try again";
+                    msg = "Check details and try again";
+                } catch (java.io.UnsupportedEncodingException ioE) {
                     msg = "Check details and try again";
                 }
-                } else {
-                code =3;
+            } else {
+                code = 3;
                 msg = "Server error try again later";
             }
         } else if (error instanceof NetworkError) {
