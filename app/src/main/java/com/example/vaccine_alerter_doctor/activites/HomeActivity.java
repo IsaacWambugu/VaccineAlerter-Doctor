@@ -146,13 +146,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             case R.id.home_card_view_4:
                 intent = new Intent(getApplicationContext(), GuardianActivity.class);
                 intent.putExtra("title","Add Guardian");
-                intent.putExtra("option",0);
+                intent.putExtra("option",1);
 
                 break;
             case R.id.home_card_view_5:
                 intent = new Intent(getApplicationContext(), GuardianActivity.class);
-                intent.putExtra("title","Add Guardian");
-                intent.putExtra("option",1);
+                intent.putExtra("title","Edit Guardian");
+                intent.putExtra("option",2);
                 break;
 
                 default:

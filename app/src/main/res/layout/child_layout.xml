@@ -62,5 +62,5 @@
     <Button
         android:id="@+id/add_child_btn"
         style="@style/page_button"
-        android:text="Add" />
+        />
 </LinearLayout>

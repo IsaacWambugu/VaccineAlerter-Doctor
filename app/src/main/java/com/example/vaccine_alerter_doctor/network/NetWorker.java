@@ -139,6 +139,7 @@ public class NetWorker {
                 url = Const.GET_GUARDIAN_DETAILS_URL;
                 break;
 
+
         }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -232,16 +233,25 @@ public class NetWorker {
 
     }
 
-    public void uploadGuardian(final Context context, String guardianId, String fName, String lName, String phone, String dOB, String gender) {
+    public void uploadGuardian(final Context context, int operation, String id, String fName, String lName, String phone, String dOB, String gender) {
 
+        int requestMethod = 0;
+        JSONObject jsonBodyObj = new JSONObject();
+        String url = "";
         uploadContentListener = (UploadContentListener) context;
 
-        JSONObject jsonBodyObj = new JSONObject();
+        if (operation == 1) {
+            requestMethod = Request.Method.POST;
+            url = Const.ADD_GUARDIAN_DETAILS_URL;
+        } else if (operation == 2) {
+            requestMethod = Request.Method.PUT;
+            url = Const.GET_GUARDIAN_DETAILS_URL + id;
+        }
 
         try {
-
-            //jsonBodyObj.put("doctor_id", new PreferenceManager(context).getDoctorId());
-            jsonBodyObj.put("id_number", Integer.valueOf(guardianId));
+            if (operation == 1) {
+                jsonBodyObj.put("guardian_id", id);
+            }
             jsonBodyObj.put("first_name", fName);
             jsonBodyObj.put("last_name", lName);
             jsonBodyObj.put("date_of_birth", dOB);
@@ -253,9 +263,7 @@ public class NetWorker {
             e.printStackTrace();
         }
 
-        // final String requestBody = jsonBodyObj.toString();
-
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, Const.ADD_GUARDIAN_DETAILS_URL, jsonBodyObj,
+        JsonObjectRequest postRequest = new JsonObjectRequest(requestMethod, url, jsonBodyObj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -298,25 +306,26 @@ public class NetWorker {
             msg = "Check message Internet connection and try again";
         } else if (error instanceof AuthFailureError) {
             code = 2;
-            msg = "Check you login credential and try again";
+            msg = "Check your login credentials and try again";
         } else if (error instanceof ServerError) {
 
             int statusCode = networkResponse.statusCode;
-            if (statusCode == 404) {
-                code = 4;
-                try {
+            try {
 
-                    msg = new JSONObject(new String(error.networkResponse.data, "UTF-8")).getString("message");
+                msg = new JSONObject(new String(error.networkResponse.data, "UTF-8")).getString("message");
 
-                } catch (JSONException jE) {
-                    msg = "Check details and try again";
-                    msg = "Check details and try again";
-                } catch (java.io.UnsupportedEncodingException ioE) {
-                    msg = "Check details and try again";
+                if (statusCode == 404) {
+                    code = 4;
+
+                } else {
+                    code = 3;
+                    // msg = "Server error try again later";
                 }
-            } else {
-                code = 3;
-                msg = "Server error try again later";
+            } catch (JSONException jE) {
+                msg = "Check details and try again";
+
+            } catch (java.io.UnsupportedEncodingException ioE) {
+                msg = "Check details and try again";
             }
         } else if (error instanceof NetworkError) {
             code = 1;

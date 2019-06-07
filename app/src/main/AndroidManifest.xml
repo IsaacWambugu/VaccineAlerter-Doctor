@@ -27,9 +27,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize"/>
 
         <activity android:name=".activites.GuardianActivity"
-            android:theme="@style/CustomActionBarTheme"
+            android:theme="@style/CustomToolbarTheme"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
+
 
         <activity android:name=".activites.ChildActivity"
             android:theme="@style/CustomToolbarTheme"

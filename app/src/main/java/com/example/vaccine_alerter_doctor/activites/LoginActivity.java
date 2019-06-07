@@ -18,6 +18,7 @@ import com.example.vaccine_alerter_doctor.data.PreferenceManager;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
+import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -73,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
 
                     if(Mtandao.checkInternet(LoginActivity.this)){
 
+                       // SoftKeyBoard.hideSoftKeyBoard(LoginActivity.this);
                         confirmLoginCredentials(logInId, logInPassword);
 
                     }else{
@@ -115,8 +117,6 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
 
         }catch (JSONException jsonE) {
 
-
-            Log.d("Err---->", jsonE.toString());
         }
 
         saveDoctorDetails(id, names, gender, phoneNo, apiKey);
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
     public void showSnackBar(String msg){
 
         Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG).setActionTextColor(Color.RED)
-                .setAction(R.string.ok, new View.OnClickListener() {
+                .setActionTextColor(Color.YELLOW).setAction(R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 

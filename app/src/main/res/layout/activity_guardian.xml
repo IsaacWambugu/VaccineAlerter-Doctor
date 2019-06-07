@@ -8,11 +8,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_login"
+            android:id="@+id/toolbar_guardian"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
-        <include layout="@layout/child_layout"/>
+        <include layout="@layout/guardian_layout"/>
     </LinearLayout>
 </ScrollView>

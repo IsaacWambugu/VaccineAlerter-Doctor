@@ -1,6 +1,5 @@
 package com.example.vaccine_alerter_doctor.activites;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,8 +10,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,6 +27,7 @@ import com.example.vaccine_alerter_doctor.interfaces.UploadContentListener;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.util.MultiSpinner;
+import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
@@ -44,12 +42,12 @@ import androidx.appcompat.widget.Toolbar;
 
 public class ChildActivity extends AppCompatActivity implements LoadContentListener, IdCheckerListener, UploadContentListener {
 
-    private TextView guard_id,
+    private EditText guard_id,
             f_name,
             l_name,
-            d_o_b,
-            gender_item,
-            message;
+            d_o_b;
+
+    private TextView message;
     private List<Integer> adminVaccineIndex = new ArrayList<>();
     private String vaccines = "";
     private Button add_btn;
@@ -86,12 +84,11 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
     private void setUIConfig() {
 
-        gender_item = (TextView) findViewById(R.id.spinner_item);
         rootView = (View) findViewById(R.id.view_activity_add_child);
-        guard_id = (TextView) findViewById(R.id.textChildGId);
-        f_name = (TextView) findViewById(R.id.textChildFName);
-        l_name = (TextView) findViewById(R.id.textChildLName);
-        d_o_b = (TextView) findViewById(R.id.textChildDOB);
+        guard_id = (EditText) findViewById(R.id.textChildGId);
+        f_name = (EditText) findViewById(R.id.textChildFName);
+        l_name = (EditText) findViewById(R.id.textChildLName);
+        d_o_b = (EditText) findViewById(R.id.textChildDOB);
         gender_spin = (Spinner) findViewById(R.id.child_gender);
         add_btn = (Button) findViewById(R.id.add_child_btn);
         toolbar = (Toolbar) findViewById(R.id.toolbar_child);
@@ -202,9 +199,8 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             @Override
             public void onClick(View v) {
 
-                hideKeyBoard();
                 String id = "";
-
+                //SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
                 if (action == 1)
                   id = guard_id.getText().toString();
                 else if(action == 2)
@@ -235,7 +231,6 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
                     uploadChildToServer(id, fName, lName, dOB, gender, selectedVaccines);
 
-
                 }
             }
         });
@@ -265,7 +260,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     private void showSnackBar(String msg) {
 
         Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG)
-                .setActionTextColor(Color.RED)
+                .setActionTextColor(Color.YELLOW)
                 .setAction(R.string.ok, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -284,7 +279,6 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         try {
 
-            // guard_id.setText(String.valueOf(response.getInt("guardian_id")));
             String names[] = response.getJSONObject("details").getString("name").split(" ", 2);
             int[] vaccines = new int[18];
             f_name.setText(names[0]);
@@ -341,17 +335,9 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         } catch (JSONException jsonE) {
 
-            showSnackBar("Something went wrong! Try again later");
+            showWaitSnackBar("Something went wrong! Try again later");
 
-            try {
 
-                Thread.sleep(2000);
-                moveToHomeActivity();
-            } catch (InterruptedException iE) {
-
-                moveToHomeActivity();
-
-            }
         }
     }
 
@@ -372,7 +358,6 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     private void uploadChildToServer(String id, String fName, String lName, String dOB, String gender, String vaccines) {
         add_btn.setVisibility(View.GONE);
         spinKitView.setVisibility(View.VISIBLE);
-        Log.d("----->Vaccines:", vaccines);
 
         if (action == 1)
             new NetWorker().uploadChild(ChildActivity.this, 1, id, fName, lName, dOB, gender, vaccines);
@@ -383,18 +368,8 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     @Override
     public void onUploadValidResponse(JSONObject response) {
         onLoadWaitComplete();
-        showSnackBar("Changes accepted successfully");
-        new CountDownTimer(1000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            public void onFinish() {
-
-                moveToHomeActivity();
-            }
-        }.start();
+        showWaitSnackBar("Changes accepted successfully");
+        moveToHomeActivity();
 
     }
 
@@ -413,6 +388,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         switch (code) {
 
             case 2:
+                showWaitSnackBar("Please login and try again");
                 startActivity(new Intent(ChildActivity.this, LoginActivity.class));
                 break;
             case 3:
@@ -435,7 +411,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         } else if (type == 1)
             showSnackBar(msg);
         else if (type == 2) {
-            showSnackBar(msg);
+            showWaitSnackBar(msg);
             moveToHomeActivity();
         }
     }
@@ -478,7 +454,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                 String id = editText.getText().toString();
                 if (id.isEmpty() || id.length() == 0 || id == null) {
 
-                    message.setText("Invalid Guardian ID");
+                    message.setText("Invalid Child ID");
                     message.setVisibility(View.VISIBLE);
 
                 } else if (!Mtandao.checkInternet(getApplicationContext())) {
@@ -488,6 +464,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                 } else {
 
                     dialogSpinKitView.setVisibility(View.VISIBLE);
+                    SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
                     fetchChildDetails(id);
 
                 }
@@ -571,10 +548,19 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             }
         });
     }
-    private void hideKeyBoard(){
+    private void showWaitSnackBar(final String msg){
 
-        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+                showSnackBar(msg);
+            }
+
+            public void onFinish() {
+
+                moveToHomeActivity();
+            }
+        }.start();
     }
 }

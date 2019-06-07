@@ -201,5 +201,7 @@
         <item name="android:background">@color/navyBlue</item>
         <item name="android:textColor">#FFFFFFFF</item>
         <item name="android:layout_marginTop">20dp</item>
+        <item name="android:imeOptions">actionDone</item>
+
     </style>
 </resources>

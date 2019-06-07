@@ -54,6 +54,11 @@
     <string name="last_name_hint">Last Name e.g Doe</string>
     <string name="dob_hit">Enter Date of Birth</string>
 
+    <!-- dialogs -->
+    <string name="provide_guardian_id">Provide Guardian Id</string>
+    <string name="provide_child_id">Provide Child Id</string>
+    <string name="child_id_hint">Child Id</string>
+    <string name="cancel">Cancel</string>
 
     <!-- home_activity-->
     <string name="home_check">Check Children</string>
