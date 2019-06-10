@@ -48,6 +48,9 @@
         android:visibility="gone"
         app:SpinKit_Color="@color/colorAccent"
         />
+    <TextView
+        style="@style/dialog_alert_text"
+        android:id="@+id/text_vaccine_alert" />
 
     <RelativeLayout
         android:orientation="horizontal"

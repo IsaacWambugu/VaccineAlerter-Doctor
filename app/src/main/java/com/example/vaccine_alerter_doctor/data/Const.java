@@ -1,7 +1,7 @@
 package com.example.vaccine_alerter_doctor.data;
 public class Const {
     //API calls
-    public static final String DOMAIN = "http://192.168.8.110:5657";
+    public static final String DOMAIN = "http://192.168.0.101:5657";
     public static final String GET_CHILDREN_URL = DOMAIN + "/api/children/";
     public static final String GET_CHILDREN_DETAILS_URL = DOMAIN + "/api/children/details/";
     public static final String LOGIN_URL = DOMAIN + "/api/doctor/signin";

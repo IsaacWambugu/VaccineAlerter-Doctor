@@ -3,6 +3,7 @@ package com.example.vaccine_alerter_doctor.activites;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -18,11 +19,12 @@ import com.example.vaccine_alerter_doctor.adapters.GuardianAdapter;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
 import com.example.vaccine_alerter_doctor.interfaces.MultiSpinnerListener;
+import com.example.vaccine_alerter_doctor.interfaces.UploadContentListener;
 import com.example.vaccine_alerter_doctor.models.GuardianModel;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
-import com.example.vaccine_alerter_doctor.others.MultipleSelectionSpinner;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
 import com.example.vaccine_alerter_doctor.util.MultiSpinner;
+import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONArray;
@@ -38,12 +40,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class ChildDetailsActivity extends AppCompatActivity implements LoadContentListener {
+public class ChildDetailsActivity extends AppCompatActivity implements UploadContentListener, LoadContentListener {
 
     private Toolbar toolbar;
     private View view;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private MultipleSelectionSpinner mSpinner;
     private ArrayList<GuardianModel> guardianList = new ArrayList<>();
     private RecyclerView recyclerView;
     private GuardianAdapter guardianAdapter;
@@ -55,7 +56,8 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             child_gender,
             child_dob,
             bcg1_days,
-            bcg1_date;
+            bcg1_date,
+            message;
 
     private ImageView atBirthAlert,
             sixWAlert,
@@ -119,13 +121,14 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             child_image;
     private LinearLayout activity_layout;
     private AlertDialog alertDialog;
+    private String vaccines, fname, lname, gender, dob;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_details);
-        setUIConfig();
         getIncomingIntent(savedInstanceState);
+        setUIConfig();
         loadVaccines();
 
     }
@@ -304,7 +307,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
     private void showSnackBar(String mesg) {
 
-        Snackbar.make(view, mesg, Snackbar.LENGTH_SHORT)
+        Snackbar.make(view, mesg, Snackbar.LENGTH_LONG)
                 .show();
 
     }
@@ -315,16 +318,17 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
 
+
                 moveToMainActivity();
 
             } else {
 
-                id = extras.getString("siteId");
+                id = extras.getString("childId");
 
             }
         } else {
 
-            id = (String) savedInstanceState.getSerializable("siteId");
+            id = (String) savedInstanceState.getSerializable("childId");
 
         }
 
@@ -338,9 +342,10 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
         try {
 
             //extract child details
-            String name = json.getJSONObject("details").getString("name");
-            String dob = json.getJSONObject("details").getString("dob");
-            String gender = json.getJSONObject("details").getString("gender");
+            fname = json.getJSONObject("details").getString("fname");
+            lname = json.getJSONObject("details").getString("lname");
+            dob = json.getJSONObject("details").getString("dob");
+            gender = json.getJSONObject("details").getString("gender");
 
             this.child_image.setBackground(ResourcesCompat.getDrawable(getResources(),
                     R.drawable.ic_male,
@@ -422,10 +427,10 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             String hibB2_date_admin = json.getJSONObject("vaccines").getJSONObject("HIBB2").getString("date_administered");
             int hibB2_days = json.getJSONObject("vaccines").getJSONObject("HIBB2").getInt("days");
 
-            int hepB3_due = json.getJSONObject("vaccines").getJSONObject("HEBB3").getInt("due");
-            int hepB3_admin = json.getJSONObject("vaccines").getJSONObject("HEBB3").getInt("administered");
-            String hepB3_date_admin = json.getJSONObject("vaccines").getJSONObject("HEBB3").getString("date_administered");
-            int hepB3_days = json.getJSONObject("vaccines").getJSONObject("HEBB3").getInt("days");
+            int hepB3_due = json.getJSONObject("vaccines").getJSONObject("HEPB3").getInt("due");
+            int hepB3_admin = json.getJSONObject("vaccines").getJSONObject("HEPB3").getInt("administered");
+            String hepB3_date_admin = json.getJSONObject("vaccines").getJSONObject("HEPB3").getString("date_administered");
+            int hepB3_days = json.getJSONObject("vaccines").getJSONObject("HEPB3").getInt("days");
 
 
             int opv3_due = json.getJSONObject("vaccines").getJSONObject("OPV3").getInt("due");
@@ -806,26 +811,30 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
             }
             //set child profile
+
+            String name = fname + " " + lname;
             child_name.setText(name);
             child_gender.setText(gender);
             child_dob.setText(dob);
 
         } catch (JSONException jsonE) {
 
-            moveToMainActivity();
+            showWaitSnackBar(2,"Something went wrong .Try again later");
 
         }
         return guardianList;
     }
 
     private void moveToMainActivity() {
-
+        finish();
         startActivity(new Intent(this, ChildrenListActivity.class));
+
     }
 
     @Override
     public void onLoadErrorResponse(Pair response) {
 
+        errorChecker(response);
     }
 
     private void displayChildDetails(ArrayList<GuardianModel> data) {
@@ -855,7 +864,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
             linkedVaccine.put(Const.VACCINE_LIST[i], false);
         }
-
+        message = (TextView) dialogView.findViewById(R.id.text_vaccine_alert);
         MultiSpinner simpleSpinner = (MultiSpinner) dialogView.findViewById(R.id.simpleMultiSpinner);
 
         simpleSpinner.setItems(linkedVaccine, new MultiSpinnerListener() {
@@ -863,10 +872,14 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
             @Override
             public void onItemsSelected(boolean[] selected) {
 
-                // your operation with code...
                 for (int i = 0; i < selected.length; i++) {
                     if (selected[i]) {
                         Log.i("TAG", i + " : " + linkedVaccine.get(i));
+                        if (i == 0) {
+                            vaccines = Const.VACCINE_LIST[i];
+                        } else {
+                            vaccines = vaccines+ "#" + Const.VACCINE_LIST[i];
+                        }
                     }
                 }
             }
@@ -875,7 +888,6 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
         dialogSpinKitView = dialogView.findViewById(R.id.vaccine_spin_kit);
         Button cancelButton = (Button) dialogView.findViewById(R.id.vaccine_dialog_cancel);
         Button proceedButton = (Button) dialogView.findViewById(R.id.vaccine_dialog_proceed);
-
         alertDialog = dialogBuilder.create();
         alertDialog.setCancelable(false);
         alertDialog.show();
@@ -888,6 +900,99 @@ public class ChildDetailsActivity extends AppCompatActivity implements LoadConte
 
             }
         });
+        proceedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialogSpinKitView.setVisibility(View.VISIBLE);
+                SoftKeyBoard.hideSoftKeyBoard(ChildDetailsActivity.this);
+                new NetWorker().uploadChild(ChildDetailsActivity.this, 2, id, fname, lname, dob, gender, vaccines);
+            }
+        });
+    }
+
+    @Override
+    public void onUploadValidResponse(JSONObject response) {
+        onLoadWaitComplete();
+        alertDialog.dismiss();
+        showSnackBar("Changes accepted successfully");
+    }
+
+    @Override
+    public void onUploadErrorResponse(Pair response) {
+
+        errorChecker(response);
+        onLoadWaitComplete();
+
+    }
+
+    private void onLoadWaitComplete() {
+
+        dialogSpinKitView.setVisibility(View.GONE);
+    }
+
+    private void errorChecker(Pair response) {
+
+        int code = (int) response.first;
+        String msg = response.second.toString();
+
+        Log.d("--->Code",String.valueOf(code));
+
+        switch (code) {
+
+            case 2:
+                showWaitSnackBar(1, "Please login and try again");
+
+                break;
+            case 3:
+                responseAlerter(msg);
+                break;
+
+            default:
+                responseAlerter(msg);
+                break;
+
+        }
+
+    }
+
+    private void showWaitSnackBar(final int operation, final String msg) {
+
+        new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+                showSnackBar(msg);
+            }
+
+            public void onFinish() {
+
+                if(operation == 1)
+                    moveToLoginActivity();
+                else
+                moveToHomeActivity();
+
+            }
+        }.start();
+    }
+
+    private void moveToHomeActivity() {
+
+        startActivity(new Intent(this, HomeActivity.class));
+
+    }
+
+    private void responseAlerter(String msg) {
+
+        message.setText(msg);
+        message.setVisibility(View.VISIBLE);
+
+    }
+    private void moveToLoginActivity(){
+
+        startActivity(new Intent(this, LoginActivity.class));
+
     }
 }
+
        

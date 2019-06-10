@@ -8,6 +8,7 @@
 
     <!---Global-->
     <string name="ok">OKAY</string>
+    <string name="Retry">RETRY</string>
 
     <!--  Into Activity -->
     <string name="input_id">Id number</string>

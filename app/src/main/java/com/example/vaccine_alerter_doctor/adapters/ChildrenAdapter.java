@@ -93,7 +93,7 @@ public class ChildrenAdapter extends RecyclerView.Adapter<ChildrenAdapter.ViewHo
             public void onClick(View v) {
 
                 Intent intent = new Intent(context, ChildDetailsActivity.class);
-                intent.putExtra("siteId", id);
+                intent.putExtra("childId", id);
 
                 context.startActivity(intent);
             }

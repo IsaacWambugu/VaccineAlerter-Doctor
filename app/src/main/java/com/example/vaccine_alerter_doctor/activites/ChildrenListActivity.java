@@ -5,13 +5,9 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.CountDownTimer;
 import android.util.Pair;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.widget.TextView;
-
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.adapters.ChildrenAdapter;
 import com.example.vaccine_alerter_doctor.data.PreferenceManager;
@@ -20,6 +16,7 @@ import com.example.vaccine_alerter_doctor.models.ChildModel;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.others.DividerItemDecoration;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
+import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class ChildrenListActivity extends AppCompatActivity implements LoadContentListener {
 
-    private Boolean   isFABOpen = false;
+    private Boolean isFABOpen = false;
     private SwipeRefreshLayout swipeRefreshLayout;
     private Toolbar toolbar;
     private View view;
@@ -65,11 +62,10 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
     }
 
-    private void setUiConfig(){
+    private void setUiConfig() {
 
         view = getWindow().getDecorView().getRootView();
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view_children);
-        // activity_site_list = (View) findViewById(R.id.activity_rental_list_view);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.child_swipe_container);
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         toolbar.setTitle("Children List");
@@ -79,7 +75,6 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-       // actionbar.setHomeAsUpIndicator(R.drawable.ic_dehaze);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -102,13 +97,11 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
         childrenList = new ArrayList<>();
         childrenAdapter = new ChildrenAdapter(childrenList);
-        //recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(childrenAdapter);
-
 
     }
 
@@ -122,18 +115,11 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
         } else {
 
-            showSnackBar("Check internet connection and try again!");
             swipeRefreshLayout.setRefreshing(false);
+            showActionSnackBar("Check internet connection and try again!");
+
         }
     }
-/*
-    @Override
-    public void onBackPressed() {
-
-        moveTaskToBack(false);
-
-    }
-    */
 
     @Override
     public void onLoadValidResponse(JSONObject response) {
@@ -149,14 +135,26 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
     public void onLoadErrorResponse(Pair response) {
 
         swipeRefreshLayout.setRefreshing(false);
-        showSnackBar(response.second.toString());
+        errorChecker(response);
 
     }
 
-    private void showSnackBar(String msg) {
+    private void showActionSnackBar(String msg) {
 
-       // Snackbar.make(view, msg, Snackbar.LENGTH_SHORT)
-         //       .show();
+        Snackbar.make(view, msg, Snackbar.LENGTH_INDEFINITE)
+                .setActionTextColor(Color.YELLOW)
+                .setAction(R.string.Retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        loadChildren();
+
+                    }
+                }).show();
+    }
+
+    private void showSnackBar(String msg) {
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show();
 
     }
 
@@ -220,7 +218,7 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
         } catch (JSONException jsonE) {
 
 
-            Log.d("Err---->", jsonE.toString());
+            showWaitSnackBar(2, "Something went wrong .Try again later");
         }
 
     }
@@ -231,4 +229,51 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
     }
 
+    private void showWaitSnackBar(final int operation, final String msg) {
+
+        new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+                showSnackBar(msg);
+            }
+
+            public void onFinish() {
+
+                if (operation == 1) {
+
+                    startActivity(new Intent(ChildrenListActivity.this, LoginActivity.class));
+                    finish();
+                } else
+                    onBackPressed();
+
+
+            }
+        }.start();
+    }
+
+    private void errorChecker(Pair response) {
+
+        int code = (int) response.first;
+        String msg = response.second.toString();
+
+        switch (code) {
+
+            case 1:
+                showActionSnackBar(msg);
+                break;
+            case 2:
+                showWaitSnackBar(1, "Please login and try again");
+                break;
+            case 3:
+                showSnackBar(msg);
+                break;
+
+            default:
+                showSnackBar(msg);
+                break;
+
+        }
+
+    }
 }
