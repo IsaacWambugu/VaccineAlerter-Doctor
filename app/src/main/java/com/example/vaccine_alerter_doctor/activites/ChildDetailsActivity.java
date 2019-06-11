@@ -50,7 +50,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
     private GuardianAdapter guardianAdapter;
     private SpinKitView dialogSpinKitView;
 
-    private String id = "";
+    private String childId = "";
 
     private TextView child_name,
             child_gender,
@@ -121,7 +121,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
             child_image;
     private LinearLayout activity_layout;
     private AlertDialog alertDialog;
-    private String vaccines, fname, lname, gender, dob;
+    private String vaccines, fname, lname, gender, dob = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,8 +145,9 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
         int id = item.getItemId();
         if (id == R.id.edit_child) {
-            startActivity(new Intent(ChildDetailsActivity.this, ChildActivity.class).putExtra("option", 1));
-            return true;
+            startActivity(new Intent(ChildDetailsActivity.this, ChildActivity.class).
+                    putExtra("option", 3).
+                    putExtra("childId", childId));
         } else if (id == R.id.add_vaccine) {
 
             showAddVaccineDialog();
@@ -288,7 +289,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
         if (Mtandao.checkInternet(getApplicationContext())) {
 
-            new NetWorker().loadChildDetails(this, id);
+            new NetWorker().loadChildDetails(this, childId);
 
         } else {
 
@@ -323,12 +324,12 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
             } else {
 
-                id = extras.getString("childId");
+                childId = extras.getString("childId");
 
             }
         } else {
 
-            id = (String) savedInstanceState.getSerializable("childId");
+            childId = (String) savedInstanceState.getSerializable("childId");
 
         }
 
@@ -872,17 +873,19 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
             @Override
             public void onItemsSelected(boolean[] selected) {
 
+
                 for (int i = 0; i < selected.length; i++) {
+
                     if (selected[i]) {
-                        Log.i("TAG", i + " : " + linkedVaccine.get(i));
-                        if (i == 0) {
-                            vaccines = Const.VACCINE_LIST[i];
-                        } else {
-                            vaccines = vaccines+ "#" + Const.VACCINE_LIST[i];
-                        }
+
+                            vaccines = "#"+Const.VACCINE_LIST[i];
+
                     }
                 }
+
+
             }
+
         });
 
         dialogSpinKitView = dialogView.findViewById(R.id.vaccine_spin_kit);
@@ -906,7 +909,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
                 dialogSpinKitView.setVisibility(View.VISIBLE);
                 SoftKeyBoard.hideSoftKeyBoard(ChildDetailsActivity.this);
-                new NetWorker().uploadChild(ChildDetailsActivity.this, 2, id, fname, lname, dob, gender, vaccines);
+                new NetWorker().uploadChild(ChildDetailsActivity.this, 2, childId, fname, lname, dob, gender, vaccines.substring(1));
             }
         });
     }

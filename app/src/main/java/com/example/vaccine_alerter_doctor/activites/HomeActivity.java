@@ -95,8 +95,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.bringToFront();
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         toolbar.setTitle("Home");
-        // toolbar.setTitleTextColor(Color.WHITE);
-        // toolbar.setSubtitleTextColor(Color.WHITE);
+        navigationView.setNavigationItemSelectedListener(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionbar = getSupportActionBar();

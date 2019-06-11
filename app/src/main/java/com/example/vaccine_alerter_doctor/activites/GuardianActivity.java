@@ -237,6 +237,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
                 } else {
 
+                    SoftKeyBoard.hideSoftKeyBoard(GuardianActivity.this);
                    uploadGuardianToServer(id, fName, lName, phone, dOB, gender);
                 }
 
@@ -457,4 +458,9 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
              }
          }.start();
      }
+    @Override
+    protected void onStart() {
+        SoftKeyBoard.hideSoftKeyBoard(GuardianActivity.this);
+        super.onStart();
+    }
 }

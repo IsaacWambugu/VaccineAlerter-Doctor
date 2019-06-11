@@ -11,6 +11,7 @@
         style="@style/editText"
         android:hint="@string/guardian_id_hint"
         android:imeOptions="actionNext"
+        android:drawableEnd="@drawable/ic_id"
         android:inputType="number" />
 
     <EditText
@@ -18,6 +19,7 @@
         style="@style/editText"
         android:hint="@string/first_name_hint"
         android:imeOptions="actionNext"
+        android:drawableEnd="@drawable/ic_name"
         android:inputType="text" />
 
     <EditText
@@ -25,6 +27,7 @@
         style="@style/editText"
         android:hint="@string/last_name_hint"
         android:imeOptions="actionNext"
+        android:drawableEnd="@drawable/ic_name"
         android:inputType="text" />
 
     <EditText
@@ -32,6 +35,7 @@
         style="@style/editText"
         android:ems="10"
         android:focusableInTouchMode="false"
+        android:drawableEnd="@drawable/ic_date"
         android:hint="@string/dob_hit"
         android:inputType="text" />
 
@@ -46,6 +50,7 @@
         android:entries="@array/genders_list"
         style="@style/spinner"
         android:popupBackground="#ffffff"
+        android:background="@drawable/spinner_drawable"
 
        />
 
@@ -56,11 +61,12 @@
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="60dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:SpinKit_Color="@color/colorAccent" />
 
     <Button
         android:id="@+id/add_child_btn"
         style="@style/page_button"
+        android:imeOptions="actionDone"
         />
 </LinearLayout>

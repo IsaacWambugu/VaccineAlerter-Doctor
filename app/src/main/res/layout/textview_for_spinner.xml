@@ -9,5 +9,6 @@
     android:paddingTop="5dp"
     android:textSize="@dimen/edit_text_size"
     android:paddingBottom="5dp"
+    android:drawableEnd="@drawable/ic_vaccine"
     android:singleLine="false"
     android:textColor="#FF000000"/>

@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
@@ -29,12 +32,15 @@ import com.example.vaccine_alerter_doctor.util.MultiSpinner;
 import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -75,10 +81,24 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         setContentView(R.layout.activity_child);
         setUIConfig();
 
-        if (action == 2) {
+        if (action == 2 || action == 3) {
             showChildIdDialog();
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        switch (id) {
+
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void setUIConfig() {
@@ -99,7 +119,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             toolbar.setTitle("Add Child");
             add_btn.setText("Add");
 
-        } else if (action == 2) {
+        } else if (action == 2 || action == 3) {
             toolbar.setTitle("Edit Child");
             add_btn.setText("Update");
             guard_id.setVisibility(View.GONE);
@@ -115,7 +135,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         } catch (NullPointerException npE) {
 
-            moveToHomeActivity();
+            finish();
         }
 
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
@@ -201,8 +221,8 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                 String id = "";
                 //SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
                 if (action == 1)
-                  id = guard_id.getText().toString();
-                else if(action == 2)
+                    id = guard_id.getText().toString();
+                else if (action == 2 || action == 3)
                     id = childId;
 
                 String fName = f_name.getText().toString();
@@ -246,19 +266,23 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             } else {
 
                 action = extras.getInt("option");
+                childId = extras.getString("childId");
 
             }
         } else {
 
             action = (int) savedInstanceState.getSerializable("option");
+            action = (int) savedInstanceState.getSerializable("childId");
 
         }
+
+
 
     }
 
     private void showSnackBar(String msg) {
 
-        Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG)
+        Snackbar.make(rootView, msg, 2000)
                 .setActionTextColor(Color.YELLOW)
                 .setAction(R.string.ok, new View.OnClickListener() {
                     @Override
@@ -270,6 +294,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
     private void fetchChildDetails(String id) {
 
+        SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
         new NetWorker().loadDetails(ChildActivity.this, 1, id);
     }
 
@@ -278,10 +303,11 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         try {
 
-            String names[] = response.getJSONObject("details").getString("name").split(" ", 2);
+            String fName = response.getJSONObject("details").getString("fname");
+            String lName = response.getJSONObject("details").getString("lname");
             int[] vaccines = new int[18];
-            f_name.setText(names[0]);
-            l_name.setText(names[1]);
+            f_name.setText(fName);
+            l_name.setText(lName);
             d_o_b.setText(response.getJSONObject("details").getString("dob"));
             String gender = response.getJSONObject("details").getString("gender");
             childId = String.valueOf(response.getJSONObject("details").getInt("id"));
@@ -334,7 +360,9 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         } catch (JSONException jsonE) {
 
-            showWaitSnackBar("Something went wrong! Try again later");
+            Log.d("--->", jsonE.toString());
+            showSnackBar("Something went wrong! Try again later");
+            afterSnackBarAction(2);
 
 
         }
@@ -342,13 +370,14 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
     @Override
     public void onValidResponse(JSONObject response) {
+
         setUIConfig();
         displayFetchResults(response);
         alertDialog.dismiss();
     }
 
     public void onErrorResponse(Pair response) {
-
+        Log.d("--->", "Error");
         errorChecker(0, response);
         onLoadWaitComplete();
 
@@ -357,18 +386,19 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     private void uploadChildToServer(String id, String fName, String lName, String dOB, String gender, String vaccines) {
         add_btn.setVisibility(View.GONE);
         spinKitView.setVisibility(View.VISIBLE);
-
+        SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
         if (action == 1)
             new NetWorker().uploadChild(ChildActivity.this, 1, id, fName, lName, dOB, gender, vaccines);
-        if (action == 2)
+        if (action == 2 || action == 3)
             new NetWorker().uploadChild(ChildActivity.this, 2, id, fName, lName, dOB, gender, vaccines);
     }
 
     @Override
     public void onUploadValidResponse(JSONObject response) {
         onLoadWaitComplete();
-        showWaitSnackBar("Changes accepted successfully");
-        moveToHomeActivity();
+        showSnackBar("Changes accepted successfully");
+        afterSnackBarAction(2);
+
 
     }
 
@@ -379,6 +409,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         onLoadWaitComplete();
 
     }
+
     private void errorChecker(int type, Pair response) {
 
         int code = (int) response.first;
@@ -387,8 +418,8 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         switch (code) {
 
             case 2:
-                showWaitSnackBar("Please login and try again");
-                startActivity(new Intent(ChildActivity.this, LoginActivity.class));
+                showSnackBar("Please login and try again");
+                afterSnackBarAction(1);
                 break;
             case 3:
                 responseAlerter(2, msg);
@@ -410,8 +441,8 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         } else if (type == 1)
             showSnackBar(msg);
         else if (type == 2) {
-            showWaitSnackBar(msg);
-            moveToHomeActivity();
+            showSnackBar(msg);
+            afterSnackBarAction(1);
         }
     }
 
@@ -432,6 +463,10 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         Button cancelButton = (Button) dialogView.findViewById(R.id.child_dialog_cancel);
         Button proceedButton = (Button) dialogView.findViewById(R.id.child_dialog_proceed);
         final EditText editText = (EditText) dialogView.findViewById(R.id.text_child_id);
+
+        if(action ==3){
+            editText.setText(childId);
+        }
         message = (TextView) dialogView.findViewById(R.id.text_child_id_alert);
         alertDialog = dialogBuilder.create();
         alertDialog.setCancelable(false);
@@ -479,9 +514,9 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
     @Override
     public void onLoadValidResponse(JSONObject response) {
+        showSnackBar("Your request has been accepted");
+        afterSnackBarAction(2);
 
-        showSnackBar("Guardian has been added!");
-        onBackPressed();
     }
 
     @Override
@@ -491,7 +526,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     }
 
     private void onLoadWaitComplete() {
-        if (action == 2)
+        if (action == 2 || action == 3)
             dialogSpinKitView.setVisibility(View.GONE);
 
         spinKitView.setVisibility(View.INVISIBLE);
@@ -519,7 +554,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                     }
                 }
 
-                if (action == 2) {
+                if (action == 2 || action == 3) {
 
                     if (!(positions.size() == 0)) {
 
@@ -547,19 +582,28 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             }
         });
     }
-    private void showWaitSnackBar(final String msg){
 
-        new CountDownTimer(1000, 1000) {
+    private void afterSnackBarAction(final int operation) {
 
+        new CountDownTimer(1000, 2000) {
             public void onTick(long millisUntilFinished) {
 
-                showSnackBar(msg);
             }
 
             public void onFinish() {
 
-                moveToHomeActivity();
+                if (operation == 1)
+                    startActivity(new Intent(ChildActivity.this, LoginActivity.class));
+                else
+                    finish();
             }
+
         }.start();
+    }
+    @Override
+
+    protected void onStart() {
+        SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
+        super.onStart();
     }
 }
