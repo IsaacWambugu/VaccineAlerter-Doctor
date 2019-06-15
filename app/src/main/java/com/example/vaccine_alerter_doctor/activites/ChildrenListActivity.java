@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Pair;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.adapters.ChildrenAdapter;
 import com.example.vaccine_alerter_doctor.data.PreferenceManager;
@@ -24,7 +27,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -71,10 +73,19 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
         toolbar.setTitle("Children List");
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setSubtitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
+
+        try {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ActionBar actionbar = getSupportActionBar();
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
+
+        } catch (NullPointerException npE) {
+
+            finish();
+        }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -100,7 +111,7 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+      //  recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(childrenAdapter);
 
     }
@@ -141,7 +152,7 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
     private void showActionSnackBar(String msg) {
 
-        Snackbar.make(view, msg, Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(view, msg, 2000)
                 .setActionTextColor(Color.YELLOW)
                 .setAction(R.string.Retry, new View.OnClickListener() {
                     @Override
@@ -225,7 +236,7 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
 
     public void displayChildrenList() {
 
-        childrenAdapter.notifyDataSetChanged();
+        runAnimationAgain();
 
     }
 
@@ -274,6 +285,15 @@ public class ChildrenListActivity extends AppCompatActivity implements LoadConte
                 break;
 
         }
+
+    }
+    private void runAnimationAgain() {
+
+        int resId = R.anim.layout_right_to_left;
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(getApplicationContext(), resId);
+        recyclerView.setLayoutAnimation(animation);
+        childrenAdapter.notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
 
     }
 }

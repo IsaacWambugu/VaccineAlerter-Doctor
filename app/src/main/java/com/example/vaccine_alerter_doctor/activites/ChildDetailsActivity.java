@@ -27,9 +27,12 @@ import com.example.vaccine_alerter_doctor.util.MultiSpinner;
 import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -37,6 +40,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -255,7 +259,18 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setSubtitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        try {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ActionBar actionbar = getSupportActionBar();
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
+
+        } catch (NullPointerException npE) {
+
+            finish();
+        }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
@@ -348,16 +363,13 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
             dob = json.getJSONObject("details").getString("dob");
             gender = json.getJSONObject("details").getString("gender");
 
-            this.child_image.setBackground(ResourcesCompat.getDrawable(getResources(),
-                    R.drawable.ic_male,
-                    null));
 
-            if (gender == "Male") {
+            if (gender.equals("Male")) {
                 this.child_image.setBackground(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_male,
                         null));
 
-            } else if (gender == "Female") {
+            } else if (gender.equals("Female")) {
 
                 this.child_image.setBackground(ResourcesCompat.getDrawable(getResources(),
                         R.drawable.ic_female,
@@ -820,8 +832,8 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
         } catch (JSONException jsonE) {
 
-            showWaitSnackBar(2,"Something went wrong .Try again later");
-
+            showSnackBar("Something went wrong! Try again later");
+            afterSnackBarAction(2);
         }
         return guardianList;
     }
@@ -834,8 +846,8 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
     @Override
     public void onLoadErrorResponse(Pair response) {
-
-        errorChecker(response);
+        onLoadWaitComplete();
+        errorChecker(1, response);
     }
 
     private void displayChildDetails(ArrayList<GuardianModel> data) {
@@ -878,7 +890,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
 
                     if (selected[i]) {
 
-                            vaccines = "#"+Const.VACCINE_LIST[i];
+                        vaccines = "#" + Const.VACCINE_LIST[i];
 
                     }
                 }
@@ -917,84 +929,94 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
     @Override
     public void onUploadValidResponse(JSONObject response) {
         onLoadWaitComplete();
-        alertDialog.dismiss();
-        showSnackBar("Changes accepted successfully");
+        showSnackBar(getResponseMessage(response));
+        afterSnackBarAction(2);
     }
 
     @Override
     public void onUploadErrorResponse(Pair response) {
-
-        errorChecker(response);
+        errorChecker(1, response);
         onLoadWaitComplete();
 
     }
 
     private void onLoadWaitComplete() {
 
-        dialogSpinKitView.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
+
     }
 
-    private void errorChecker(Pair response) {
+    private void errorChecker(int type, Pair response) {
 
         int code = (int) response.first;
         String msg = response.second.toString();
 
-        Log.d("--->Code",String.valueOf(code));
-
         switch (code) {
 
             case 2:
-                showWaitSnackBar(1, "Please login and try again");
-
+                showSnackBar("Please login and try again");
+                afterSnackBarAction(1);
                 break;
             case 3:
-                responseAlerter(msg);
+                responseAlerter(2, msg);
                 break;
 
             default:
-                responseAlerter(msg);
+                responseAlerter(type, msg);
                 break;
 
         }
 
     }
 
-    private void showWaitSnackBar(final int operation, final String msg) {
+    private void responseAlerter(int type, String msg) {
 
-        new CountDownTimer(1000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-
-                showSnackBar(msg);
-            }
-
-            public void onFinish() {
-
-                if(operation == 1)
-                    moveToLoginActivity();
-                else
-                moveToHomeActivity();
-
-            }
-        }.start();
+        if (type == 0) {
+            message.setText(msg);
+            message.setVisibility(View.VISIBLE);
+        } else if (type == 1)
+            showSnackBar(msg);
+        else if (type == 2) {
+            showSnackBar(msg);
+            afterSnackBarAction(1);
+        }
     }
-
     private void moveToHomeActivity() {
 
         startActivity(new Intent(this, HomeActivity.class));
 
     }
 
-    private void responseAlerter(String msg) {
+    private void afterSnackBarAction(final int operation) {
 
-        message.setText(msg);
-        message.setVisibility(View.VISIBLE);
+        new CountDownTimer(1000, 2000) {
+            public void onTick(long millisUntilFinished) {
 
+            }
+
+            public void onFinish() {
+
+                if (operation == 1)
+                    startActivity(new Intent(ChildDetailsActivity.this, LoginActivity.class));
+                else
+                    finish();
+            }
+
+        }.start();
     }
-    private void moveToLoginActivity(){
+    private String getResponseMessage(JSONObject response){
 
-        startActivity(new Intent(this, LoginActivity.class));
+        String msg = "";
 
+        try {
+
+            msg =  response.getString("message");
+        }catch (JSONException jsonE){
+
+            moveToHomeActivity();
+        }
+
+        return msg;
     }
 }
 

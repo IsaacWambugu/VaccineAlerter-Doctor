@@ -295,8 +295,51 @@ public class NetWorker {
         NetworkSingleton.getInstance(context).addToRequestQueue(postRequest);
 
     }
+    public void deleteUser(final Context context, int operation, String id) {
+
+        String url = "";
+        uploadContentListener = (UploadContentListener) context;
+
+        if (operation == 1)
+            url = Const.DELETE_CHILD + id;
+        else if (operation == 2)
+            url = Const.DELETE_GUARDIAN + id;
+
+        JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // response
+                        Log.d("Response", response.toString());
+                        uploadContentListener.onUploadValidResponse(response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        uploadContentListener.onUploadErrorResponse(checkErrorResponse(error));
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("auth-key", new PreferenceManager(context).getApiKey());
+
+                return headers;
+            }
+        };
+
+        NetworkSingleton.getInstance(context).addToRequestQueue(deleteRequest);
+
+    }
 
     private Pair<Integer, String> checkErrorResponse(VolleyError error) {
+       Log.d("--->Error response",String.valueOf(error.networkResponse.statusCode));
+
         String msg = "";
         NetworkResponse networkResponse = error.networkResponse;
         int code = 0;
@@ -317,7 +360,10 @@ public class NetWorker {
                 if (statusCode == 404) {
                     code = 4;
 
-                } else {
+                }if(statusCode == 409){
+                    code = 1;
+
+                }else {
                     code = 3;
                     // msg = "Server error try again later";
                 }

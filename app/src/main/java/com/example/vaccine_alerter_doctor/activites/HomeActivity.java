@@ -60,9 +60,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        Log.d("---->", "Sign out");
+
         if (id == R.id.nav_log_out) {
-            Log.d("---->", "Sign out");
+
             Intent intent = new Intent(this, LoginActivity.class);
             clearDoctorDetails();
             startActivity(intent);
@@ -100,7 +100,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_dehaze);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_hamburger);
 
     }
 

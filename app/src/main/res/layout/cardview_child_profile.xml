@@ -55,7 +55,7 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="10dp"
                     android:textColor="@color/black"
-                    android:paddingLeft="@dimen/pad_prof" />
+                    android:paddingStart="@dimen/pad_prof" />
 
                 <TextView
                     android:id="@+id/child_profile_dob"
@@ -63,7 +63,7 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/black"
-                    android:paddingLeft="@dimen/pad_prof" />
+                    android:paddingStart="@dimen/pad_prof" />
 
                 <TextView
                     android:id="@+id/child_profile_gender"
@@ -71,7 +71,7 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/black"
-                    android:paddingLeft="@dimen/pad_prof" />
+                    android:paddingStart="@dimen/pad_prof" />
 
             </LinearLayout>
         </LinearLayout>

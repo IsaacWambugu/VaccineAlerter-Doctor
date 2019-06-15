@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -152,6 +153,12 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
         preferenceManager.setDoctorGender(gender);
         preferenceManager.setDoctorNumber(phoneNumber);
         preferenceManager.setApiKey(apiKey);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
 
     }
 }

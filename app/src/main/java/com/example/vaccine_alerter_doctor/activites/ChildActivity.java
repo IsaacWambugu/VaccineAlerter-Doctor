@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
@@ -32,15 +31,14 @@ import com.example.vaccine_alerter_doctor.util.MultiSpinner;
 import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
-
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
-
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -51,6 +49,11 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             f_name,
             l_name,
             d_o_b;
+    private String id,
+            fName,
+            lName,
+            dOB,
+            gender;
 
     private TextView message;
     private List<Integer> adminVaccineIndex = new ArrayList<>();
@@ -70,8 +73,10 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             "Male",
             "Female"
     };
+
     private String selectedVaccines = "";
     private String childId = "";
+    private String guardianId = "";
     private LinkedHashMap<String, Boolean> linkedVaccine;
 
     @Override
@@ -86,6 +91,15 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         }
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        if(action == 2 || action == 3){
+            getMenuInflater().inflate(R.menu.menu_user, menu);
+        }
+
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -95,9 +109,13 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
             case android.R.id.home:
                 finish();
-                return true;
-        }
+                break;
 
+            case R.id.delete_user:
+                showConfirmationMessage(3);
+                break;
+
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -132,6 +150,9 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         try {
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ActionBar actionbar = getSupportActionBar();
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
 
         } catch (NullPointerException npE) {
 
@@ -218,17 +239,19 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             @Override
             public void onClick(View v) {
 
-                String id = "";
-                //SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
-                if (action == 1)
-                    id = guard_id.getText().toString();
-                else if (action == 2 || action == 3)
-                    id = childId;
+                int operation = 0;
+                if (action == 1) {
+                    guardianId = guard_id.getText().toString();
+                    operation = 1;
+                }else if(action == 2 || action == 3){
+                    operation = 2;
 
-                String fName = f_name.getText().toString();
-                String lName = l_name.getText().toString();
-                String dOB = d_o_b.getText().toString();
-                String gender = gender_spin.getSelectedItem().toString();
+                }
+
+                fName = f_name.getText().toString();
+                lName = l_name.getText().toString();
+                dOB = d_o_b.getText().toString();
+                gender = gender_spin.getSelectedItem().toString();
 
                 if (fName.isEmpty() || fName.length() == 0 || fName == null || lName.isEmpty() || lName.length() == 0 || lName == null) {
 
@@ -238,7 +261,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
                     showSnackBar("Enter Date of Birth");
 
-                } else if (id.isEmpty() || id.length() == 0 || id == null) {
+                } else if (action == 1 && (guardianId.isEmpty() || guardianId.length() == 0 || guardianId == null)) {
 
                     showSnackBar("Invalid Guardian ID");
 
@@ -248,11 +271,13 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
                 } else {
 
-                    uploadChildToServer(id, fName, lName, dOB, gender, selectedVaccines);
+                    showConfirmationMessage(operation);
 
                 }
             }
         });
+
+
     }
 
     private void getIncomingIntent(Bundle savedInstanceState) {
@@ -275,7 +300,6 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             action = (int) savedInstanceState.getSerializable("childId");
 
         }
-
 
 
     }
@@ -303,13 +327,13 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         try {
 
-            String fName = response.getJSONObject("details").getString("fname");
-            String lName = response.getJSONObject("details").getString("lname");
+            fName = response.getJSONObject("details").getString("fname");
+            lName = response.getJSONObject("details").getString("lname");
             int[] vaccines = new int[18];
             f_name.setText(fName);
             l_name.setText(lName);
             d_o_b.setText(response.getJSONObject("details").getString("dob"));
-            String gender = response.getJSONObject("details").getString("gender");
+            gender = response.getJSONObject("details").getString("gender");
             childId = String.valueOf(response.getJSONObject("details").getInt("id"));
 
 
@@ -360,7 +384,6 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         } catch (JSONException jsonE) {
 
-            Log.d("--->", jsonE.toString());
             showSnackBar("Something went wrong! Try again later");
             afterSnackBarAction(2);
 
@@ -377,7 +400,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     }
 
     public void onErrorResponse(Pair response) {
-        Log.d("--->", "Error");
+
         errorChecker(0, response);
         onLoadWaitComplete();
 
@@ -388,15 +411,15 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         spinKitView.setVisibility(View.VISIBLE);
         SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
         if (action == 1)
-            new NetWorker().uploadChild(ChildActivity.this, 1, id, fName, lName, dOB, gender, vaccines);
+            new NetWorker().uploadChild(ChildActivity.this, 1, guardianId, fName, lName, dOB, gender, vaccines);
         if (action == 2 || action == 3)
-            new NetWorker().uploadChild(ChildActivity.this, 2, id, fName, lName, dOB, gender, vaccines);
+            new NetWorker().uploadChild(ChildActivity.this, 2, childId , fName, lName, dOB, gender, vaccines);
     }
 
     @Override
     public void onUploadValidResponse(JSONObject response) {
         onLoadWaitComplete();
-        showSnackBar("Changes accepted successfully");
+        showSnackBar(getResponseMessage(response));
         afterSnackBarAction(2);
 
 
@@ -464,7 +487,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         Button proceedButton = (Button) dialogView.findViewById(R.id.child_dialog_proceed);
         final EditText editText = (EditText) dialogView.findViewById(R.id.text_child_id);
 
-        if(action ==3){
+        if (action == 3) {
             editText.setText(childId);
         }
         message = (TextView) dialogView.findViewById(R.id.text_child_id_alert);
@@ -526,11 +549,15 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
     }
 
     private void onLoadWaitComplete() {
-        if (action == 2 || action == 3)
+        if (action == 2 || action == 3) {
             dialogSpinKitView.setVisibility(View.GONE);
 
-        spinKitView.setVisibility(View.INVISIBLE);
+
+        }
+
+        spinKitView.setVisibility(View.GONE);
         add_btn.setVisibility(View.VISIBLE);
+
 
     }
 
@@ -600,10 +627,64 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
         }.start();
     }
+
     @Override
 
     protected void onStart() {
         SoftKeyBoard.hideSoftKeyBoard(ChildActivity.this);
         super.onStart();
+    }
+
+    private void showConfirmationMessage(final int operation) {
+
+        String msg  = "";
+
+        switch (operation){
+            case 1:
+                msg = "Are you want to add Child?";
+                break;
+            case 3:
+                msg = "Are you want to delete Child?";
+                break;
+            case 2:
+                msg = "Are you want to update Child?";
+                break;
+        }
+
+        new LovelyStandardDialog(this, R.style.TintTheme, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                .setTopColorRes(R.color.customGrey)
+                .setTopTitleColor(R.color.white)
+                .setPositiveButtonColorRes(R.color.black)
+                .setTitle("Confirmation")
+                .setMessage(msg)
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if(operation == 1 || operation ==2){
+
+                            uploadChildToServer(id , fName, lName, dOB, gender, vaccines);
+                        }else if(operation == 3){
+
+                            new NetWorker().deleteUser(ChildActivity.this, 1, childId);
+                        }
+                    }
+
+                }).show();
+
+    }
+    private String getResponseMessage(JSONObject response){
+
+       String msg = "";
+
+        try {
+
+            msg =  response.getString("message");
+        }catch (JSONException jsonE){
+
+            moveToHomeActivity();
+        }
+
+        return msg;
     }
 }

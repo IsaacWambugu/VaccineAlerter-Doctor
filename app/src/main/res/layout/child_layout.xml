@@ -50,7 +50,6 @@
         android:entries="@array/genders_list"
         style="@style/spinner"
         android:popupBackground="#ffffff"
-        android:background="@drawable/spinner_drawable"
 
        />
 
@@ -69,4 +68,5 @@
         style="@style/page_button"
         android:imeOptions="actionDone"
         />
+
 </LinearLayout>

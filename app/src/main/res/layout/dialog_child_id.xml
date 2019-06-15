@@ -37,6 +37,7 @@
         style="@style/editText"
         android:hint="@string/child_id_hint"
         android:inputType="number"
+        android:drawableRight="@drawable/ic_id"
         android:id="@+id/text_child_id" />
 
     <com.github.ybq.android.spinkit.SpinKitView

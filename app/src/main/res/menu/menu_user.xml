@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.vaccine_alerter_client.MainActivity">
+    <item
+        android:id="@+id/delete_user"
+        android:icon="@drawable/ic_delete_user"
+        android:title="@string/delete_user"
+        app:showAsAction="ifRoom"/>
+
+</menu>

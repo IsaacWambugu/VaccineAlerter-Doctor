@@ -36,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/guardian_id_hint"
+            android:drawableRight="@drawable/ic_id"
             android:inputType="number" />
 
         <com.github.ybq.android.spinkit.SpinKitView

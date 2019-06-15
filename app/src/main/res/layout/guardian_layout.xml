@@ -10,6 +10,7 @@
             android:id="@+id/textGuardianId"
             android:imeOptions="actionNext"
             style="@style/editText"
+            android:drawableEnd="@drawable/ic_id"
             android:hint="@string/guardian_id_hint"
             android:inputType="number"/>
 
@@ -18,31 +19,36 @@
             android:imeOptions="actionNext"
             android:inputType="text"
             style="@style/editText"
+            android:drawableEnd="@drawable/ic_name"
             android:hint="@string/first_name_hint"/>
 
         <EditText
             android:id="@+id/testGuardianLName"
-
+            android:drawableEnd="@drawable/ic_name"
             android:imeOptions="actionNext"
             android:inputType="text"
             style="@style/editText"
             android:hint="@string/last_name_hint"/>
+
         <EditText
             android:id="@+id/textGuardianNo"
             style="@style/editText"
             android:hint="Phone number"
+            android:drawableEnd="@drawable/ic_phone"
             android:inputType="number"/>
 
         <EditText
             android:id="@+id/textGuardDOB"
             style="@style/editText"
+            android:drawableEnd="@drawable/ic_date"
             android:ems="10"
             android:focusableInTouchMode="false"
             android:hint="@string/dob_hit" />
         <Spinner
             android:id="@+id/guard_gender"
             style="@style/spinner"
-            android:popupBackground="#ffffff"/>
+            android:popupBackground="#ffffff"
+            />
 
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/guardian_spin_kit"
@@ -51,13 +57,13 @@
             android:layout_height="30dp"
             android:layout_marginTop="60dp"
             android:layout_gravity="center_horizontal"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:SpinKit_Color="@color/colorAccent" />
 
     <Button
         android:id="@+id/add_guard_btn"
-       style="@style/page_button"
-
+        style="@style/page_button"
+        android:imeOptions="actionDone"
         />
 
 </LinearLayout>

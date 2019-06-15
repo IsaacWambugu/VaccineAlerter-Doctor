@@ -34,6 +34,7 @@
         <activity android:name=".activites.GuardianActivity"
             android:theme="@style/CustomToolbarTheme"
             android:screenOrientation="portrait"
+            android:parentActivityName=".activites.HomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
 
 

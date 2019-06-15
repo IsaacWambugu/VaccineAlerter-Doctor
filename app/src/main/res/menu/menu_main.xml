@@ -4,12 +4,12 @@
     tools:context="com.example.vaccine_alerter_client.MainActivity">
         <item
             android:id="@+id/add_vaccine"
-            android:icon="@drawable/ic_add_circle_outline"
+            android:icon="@drawable/ic_add"
             android:title="Add Vaccine"
             app:showAsAction="ifRoom"/>
         <item
             android:id="@+id/edit_child"
-            android:icon="@drawable/ic_mode_edit"
+            android:icon="@drawable/ic_edit"
             android:title="Edit Child"
             app:showAsAction="ifRoom"/>
 

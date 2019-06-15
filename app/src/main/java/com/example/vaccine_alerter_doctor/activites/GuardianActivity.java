@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,9 +28,11 @@ import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Calendar;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -40,6 +44,13 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
             l_name,
             d_o_b,
             phone_no;
+    private String id,
+            fName,
+            lName,
+            phone,
+            dOB,
+            gender;
+
     private TextView message;
     private Button add_btn;
     private View rootView;
@@ -70,6 +81,30 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        if (action == 2) {
+            getMenuInflater().inflate(R.menu.menu_user, menu);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        switch (id) {
+
+            case R.id.delete_user:
+                showConfirmationMessage(3);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void getIncomingIntent(Bundle savedInstanceState) {
 
         if (savedInstanceState == null) {
@@ -89,7 +124,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
         }
 
-        }
+    }
 
     private void setUIConfig() {
 
@@ -118,13 +153,17 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
             moveToHomeActivity();
         }
 
+
         try {
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ActionBar actionbar = getSupportActionBar();
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_back);
 
         } catch (NullPointerException npE) {
 
-            moveToHomeActivity();
+            finish();
         }
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 this, R.layout.spinner_item, genderList) {
@@ -199,21 +238,22 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String id = "";
-               // SoftKeyBoard.hideSoftKeyBoard(GuardianActivity.this);
-
-                if (action == 1)
+                id = "";
+                // SoftKeyBoard.hideSoftKeyBoard(GuardianActivity.this);
+                int operation = 0;
+                if (action == 1) {
                     id = guard_id.getText().toString();
-                else if(action == 2)
+                    operation = 1;
+                }else if (action == 2) {
                     id = guardianId;
+                    operation = 2;
+                }
 
-
-                String fName = f_name.getText().toString().trim();
-                String lName = l_name.getText().toString().trim();
-                String phone = phone_no.getText().toString().trim();
-                String dOB = d_o_b.getText().toString().trim();
-                String gender = gender_spin.getSelectedItem().toString();
+                fName = f_name.getText().toString().trim();
+                lName = l_name.getText().toString().trim();
+                phone = phone_no.getText().toString().trim();
+                dOB = d_o_b.getText().toString().trim();
+                gender = gender_spin.getSelectedItem().toString();
 
                 if (fName.isEmpty() || fName.length() == 0 || fName == null || lName.isEmpty() || lName.length() == 0 || lName == null) {
 
@@ -231,23 +271,22 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
                     showSnackBar("Select the child's gender");
 
-                } else if (phone.isEmpty() || phone.length() < 9 || phone == null) {
+                } else if (phone.isEmpty() || phone.length() < 9 || phone == null || phone.length() > 10) {
 
                     showSnackBar("Please provide a valid phone number");
 
                 } else {
 
                     SoftKeyBoard.hideSoftKeyBoard(GuardianActivity.this);
-                   uploadGuardianToServer(id, fName, lName, phone, dOB, gender);
+                    showConfirmationMessage(operation);
                 }
 
             }
         });
-
     }
 
     private void showSnackBar(String msg) {
-        Snackbar.make(rootView, msg, Snackbar.LENGTH_LONG)
+        Snackbar.make(rootView, msg, 2000)
                 .setActionTextColor(Color.YELLOW)
                 .setAction(R.string.ok, new View.OnClickListener() {
                     @Override
@@ -275,8 +314,8 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
     @Override
     public void onLoadValidResponse(JSONObject response) {
-
-                showWaitSnackBar("Guardian has been added!");
+        showSnackBar("Your request has been accepted");
+        afterSnackBarAction(2);
     }
 
     private void moveToHomeActivity() {
@@ -348,10 +387,11 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
 
     private void onLoadWaitComplete() {
-        if (action == 2)
+        if (action == 2) {
             dialogSpinKitView.setVisibility(View.GONE);
 
-        spinKitView.setVisibility(View.INVISIBLE);
+        }
+        spinKitView.setVisibility(View.GONE);
         add_btn.setVisibility(View.VISIBLE);
 
     }
@@ -366,16 +406,16 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
             phone_no.setText(response.getJSONObject("details").getString("phone_number"));
             String gender = response.getJSONObject("details").getString("gender");
 
-            if(gender  == "Male"){
+            if (gender == "Male") {
                 gender_spin.setSelection(0);
-            }else{
+            } else {
                 gender_spin.setSelection(1);
             }
 
         } catch (JSONException jsonE) {
 
-            showWaitSnackBar("Something went wrong Try again later");
-
+            showSnackBar("Something went wrong! Try again later");
+            afterSnackBarAction(2);
         }
 
     }
@@ -384,8 +424,8 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
     public void onUploadValidResponse(JSONObject response) {
 
         onLoadWaitComplete();
-        showWaitSnackBar("Changes accepted successfully");
-
+        showSnackBar(getResponseMessage(response));
+        afterSnackBarAction(2);
     }
 
     @Override
@@ -395,6 +435,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
         onLoadWaitComplete();
 
     }
+
     private void errorChecker(int type, Pair response) {
 
         int code = (int) response.first;
@@ -403,7 +444,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
         switch (code) {
 
             case 2:
-                showWaitSnackBar("Please Login and try again!");
+                showSnackBar("Please login and try again");
                 startActivity(new Intent(GuardianActivity.this, LoginActivity.class));
                 break;
             case 3:
@@ -415,8 +456,8 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
                 break;
 
         }
-
     }
+
     @Override
     public void onValidResponse(JSONObject response) {
         setUIConfig();
@@ -430,6 +471,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
         onLoadWaitComplete();
 
     }
+
     private void responseAlerter(int type, String msg) {
 
         if (type == 0) {
@@ -438,29 +480,86 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
         } else if (type == 1)
             showSnackBar(msg);
         else if (type == 2) {
-            showWaitSnackBar(msg);
+            showSnackBar(msg);
             moveToHomeActivity();
         }
     }
 
-     private void showWaitSnackBar(final String msg){
+    private void afterSnackBarAction(final int operation) {
 
-        new CountDownTimer(1000, 1000) {
+        new CountDownTimer(1000, 2000) {
+            public void onTick(long millisUntilFinished) {
 
-             public void onTick(long millisUntilFinished) {
+            }
 
-                 showSnackBar(msg);
-             }
+            public void onFinish() {
 
-             public void onFinish() {
+                if (operation == 1)
+                    startActivity(new Intent(GuardianActivity.this, LoginActivity.class));
+                else
+                    finish();
+            }
 
-                 moveToHomeActivity();
-             }
-         }.start();
-     }
+        }.start();
+    }
+
+
     @Override
     protected void onStart() {
         SoftKeyBoard.hideSoftKeyBoard(GuardianActivity.this);
         super.onStart();
+    }
+
+    private void showConfirmationMessage(final int operation) {
+
+        String msg = "";
+
+        switch (operation) {
+            case 1:
+                msg = "Are you want to add guardian?";
+                break;
+            case 3:
+                msg = "Are you want to delete guardian?";
+                break;
+            case 2:
+                msg = "Are you want to update guardian?";
+                break;
+        }
+
+
+        new LovelyStandardDialog(this, R.style.TintTheme, LovelyStandardDialog.ButtonLayout.VERTICAL)
+                .setTopColorRes(R.color.customGrey)
+                .setTopTitleColor(R.color.white)
+                .setPositiveButtonColorRes(R.color.black)
+                .setTitle("Confirmation")
+                .setMessage(msg)
+                .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (operation == 1 || operation == 2) {
+                            uploadGuardianToServer(id, fName, lName, phone, dOB, gender);
+                        } else if (operation == 3) {
+                            new NetWorker().deleteUser(GuardianActivity.this, 2, guardianId);
+                        }
+                    }
+
+                }).show();
+
+    }
+
+    private String getResponseMessage(JSONObject response) {
+
+        String msg = "";
+
+        try {
+
+            msg = response.getString("message");
+        } catch (JSONException jsonE) {
+
+            moveToHomeActivity();
+        }
+
+        return msg;
     }
 }
