@@ -18,7 +18,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
@@ -202,9 +201,7 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
                 if (position > 0) {
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                    Toast.makeText
-                            (getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
-                            .show();
+
                 }
             }
 

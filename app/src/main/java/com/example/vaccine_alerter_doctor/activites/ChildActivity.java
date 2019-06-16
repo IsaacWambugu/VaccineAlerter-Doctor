@@ -18,7 +18,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
@@ -196,9 +195,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
                 if (position > 0) {
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.BLACK);
-                    Toast.makeText
-                            (getApplicationContext(), "Selected : " + selectedItemText, Toast.LENGTH_SHORT)
-                            .show();
+
                 }
             }
 
@@ -222,6 +219,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                                 d_o_b.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
                             }
                         }, year, month, day);
+
                 picker.show();
             }
         });
@@ -421,7 +419,6 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         onLoadWaitComplete();
         showSnackBar(getResponseMessage(response));
         afterSnackBarAction(2);
-
 
     }
 
