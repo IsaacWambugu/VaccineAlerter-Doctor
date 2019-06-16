@@ -138,8 +138,6 @@ public class NetWorker {
             case 2:
                 url = Const.GET_GUARDIAN_DETAILS_URL;
                 break;
-
-
         }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -338,7 +336,6 @@ public class NetWorker {
     }
 
     private Pair<Integer, String> checkErrorResponse(VolleyError error) {
-       Log.d("--->Error response",String.valueOf(error.networkResponse.statusCode));
 
         String msg = "";
         NetworkResponse networkResponse = error.networkResponse;
