@@ -978,7 +978,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
             showSnackBar(msg);
         else if (type == 2) {
             showSnackBar(msg);
-            afterSnackBarAction(1);
+            afterSnackBarAction(2);
         }
     }
     private void moveToHomeActivity() {

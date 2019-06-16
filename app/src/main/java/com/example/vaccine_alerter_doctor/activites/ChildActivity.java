@@ -30,6 +30,7 @@ import com.example.vaccine_alerter_doctor.util.MultiSpinner;
 import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class ChildActivity extends AppCompatActivity implements LoadContentListener, IdCheckerListener, UploadContentListener {
-
+    private FirebaseAnalytics mFirebaseAnalytics;
     private EditText guard_id,
             f_name,
             l_name,
@@ -84,6 +85,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         getIncomingIntent(savedInstanceState);
         setContentView(R.layout.activity_child);
         setUIConfig();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (action == 2 || action == 3) {
             showChildIdDialog();
