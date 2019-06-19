@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.example.vaccine_alerter_doctor.R;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
@@ -32,19 +33,22 @@ import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class ChildActivity extends AppCompatActivity implements LoadContentListener, IdCheckerListener, UploadContentListener {
-    private FirebaseAnalytics mFirebaseAnalytics;
+
     private EditText guard_id,
             f_name,
             l_name,
@@ -85,17 +89,17 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         getIncomingIntent(savedInstanceState);
         setContentView(R.layout.activity_child);
         setUIConfig();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         if (action == 2 || action == 3) {
             showChildIdDialog();
         }
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(action == 2 || action == 3){
+        if (action == 2 || action == 3) {
             getMenuInflater().inflate(R.menu.menu_user, menu);
         }
 
@@ -243,7 +247,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                 if (action == 1) {
                     guardianId = guard_id.getText().toString();
                     operation = 1;
-                }else if(action == 2 || action == 3){
+                } else if (action == 2 || action == 3) {
                     operation = 2;
 
                 }
@@ -413,7 +417,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
         if (action == 1)
             new NetWorker().uploadChild(ChildActivity.this, 1, guardianId, fName, lName, dOB, gender, vaccines);
         if (action == 2 || action == 3)
-            new NetWorker().uploadChild(ChildActivity.this, 2, childId , fName, lName, dOB, gender, vaccines);
+            new NetWorker().uploadChild(ChildActivity.this, 2, childId, fName, lName, dOB, gender, vaccines);
     }
 
     @Override
@@ -444,9 +448,8 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                 afterSnackBarAction(1);
                 break;
             case 3:
-                responseAlerter(2, msg);
+                responseAlerter(type, msg);
                 break;
-
             default:
                 responseAlerter(type, msg);
                 break;
@@ -464,7 +467,7 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
             showSnackBar(msg);
         else if (type == 2) {
             showSnackBar(msg);
-            afterSnackBarAction(1);
+            moveToHomeActivity();
         }
     }
 
@@ -636,17 +639,17 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
 
     private void showConfirmationMessage(final int operation) {
 
-        String msg  = "";
+        String msg = "";
 
-        switch (operation){
+        switch (operation) {
             case 1:
-                msg = "Are you want to add Child?";
+                msg = "Please confirm you want to add Child?";
                 break;
             case 3:
-                msg = "Are you want to delete Child?";
+                msg = "Please confirm you want to delete Child?";
                 break;
             case 2:
-                msg = "Are you want to update Child?";
+                msg = "Please confirm you want to update Child?";
                 break;
         }
 
@@ -660,10 +663,10 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                     @Override
                     public void onClick(View v) {
 
-                        if(operation == 1 || operation ==2){
+                        if (operation == 1 || operation == 2) {
 
-                            uploadChildToServer(id , fName, lName, dOB, gender, vaccines);
-                        }else if(operation == 3){
+                            uploadChildToServer(id, fName, lName, dOB, gender, vaccines);
+                        } else if (operation == 3) {
 
                             new NetWorker().deleteUser(ChildActivity.this, 1, childId);
                         }
@@ -672,14 +675,15 @@ public class ChildActivity extends AppCompatActivity implements LoadContentListe
                 }).show();
 
     }
-    private String getResponseMessage(JSONObject response){
 
-       String msg = "";
+    private String getResponseMessage(JSONObject response) {
+
+        String msg = "";
 
         try {
 
-            msg =  response.getString("message");
-        }catch (JSONException jsonE){
+            msg = response.getString("message");
+        } catch (JSONException jsonE) {
 
             moveToHomeActivity();
         }

@@ -15,7 +15,6 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.data.PreferenceManager;
 import com.example.vaccine_alerter_doctor.interfaces.IdCheckerListener;
@@ -30,21 +29,21 @@ import java.util.Map;
 
 public class NetWorker {
 
-    private StringRequest stringRequest;
     private LoadContentListener loadContentListener;
     private IdCheckerListener idCheckerListener;
     private UploadContentListener uploadContentListener;
+    private String domain = "";
 
     public NetWorker() {
 
-
+        domain = Const.domain;
     }
 
     public void loadChildren(Context context, String id) {
         loadContentListener = (LoadContentListener) context;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, Const.GET_CHILDREN_URL + "33451647" + "/0/30", null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, domain+Const.GET_CHILDREN_PATH + "33451647" + "/0/1000", null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -68,7 +67,7 @@ public class NetWorker {
         loadContentListener = (LoadContentListener) context;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, Const.GET_CHILDREN_DETAILS_URL + id, null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, domain+Const.GET_CHILDREN_DETAILS_PATH + id, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
@@ -102,7 +101,8 @@ public class NetWorker {
             e.printStackTrace();
         }
 
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, Const.LOGIN_URL, jsonBodyObj,
+
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST, domain+Const.LOGIN_PATH, jsonBodyObj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -133,10 +133,10 @@ public class NetWorker {
 
         switch (check) {
             case 1:
-                url = Const.GET_CHILDREN_DETAILS_URL;
+                url = domain + Const.GET_CHILDREN_DETAILS_PATH;
                 break;
             case 2:
-                url = Const.GET_GUARDIAN_DETAILS_URL;
+                url = domain + Const.GET_GUARDIAN_DETAILS_PATH;
                 break;
         }
 
@@ -174,10 +174,10 @@ public class NetWorker {
 
         if (operation == 1) {
             requestMethod = Request.Method.POST;
-            url = Const.ADD_CHILD_URL;
+            url = domain + Const.ADD_CHILD_PATH;
         } else if (operation == 2) {
             requestMethod = Request.Method.PUT;
-            url = Const.CHILD_URL + id;
+            url =  domain + Const.CHILD_PATH + id;
         }
 
         try {
@@ -240,10 +240,10 @@ public class NetWorker {
 
         if (operation == 1) {
             requestMethod = Request.Method.POST;
-            url = Const.ADD_GUARDIAN_DETAILS_URL;
+            url = domain+Const.ADD_GUARDIAN_DETAILS_PATH;
         } else if (operation == 2) {
             requestMethod = Request.Method.PUT;
-            url = Const.GET_GUARDIAN_DETAILS_URL + id;
+            url = domain+Const.GET_GUARDIAN_DETAILS_PATH + id;
         }
 
         try {
@@ -299,9 +299,9 @@ public class NetWorker {
         uploadContentListener = (UploadContentListener) context;
 
         if (operation == 1)
-            url = Const.DELETE_CHILD + id;
+            url = domain+Const.DELETE_CHILD_PATH + id;
         else if (operation == 2)
-            url = Const.DELETE_GUARDIAN + id;
+            url = domain+Const.DELETE_GUARDIAN_PATH + id;
 
         JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 new Response.Listener<JSONObject>() {
@@ -337,6 +337,7 @@ public class NetWorker {
 
     private Pair<Integer, String> checkErrorResponse(VolleyError error) {
 
+        Log.d("---->Error", error.toString());
         String msg = "";
         NetworkResponse networkResponse = error.networkResponse;
         int code = 0;
@@ -350,12 +351,15 @@ public class NetWorker {
         } else if (error instanceof ServerError) {
 
             int statusCode = networkResponse.statusCode;
+
+            Log.d("--->code", String.valueOf(statusCode));
             try {
 
                 msg = new JSONObject(new String(error.networkResponse.data, "UTF-8")).getString("message");
 
                 if (statusCode == 404) {
                     code = 4;
+
 
                 }if(statusCode == 409){
                     code = 1;

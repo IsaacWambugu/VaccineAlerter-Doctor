@@ -4,28 +4,22 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.example.vaccine_alerter_doctor.R;
+import com.example.vaccine_alerter_doctor.data.Const;
 import com.example.vaccine_alerter_doctor.data.PreferenceManager;
 import com.example.vaccine_alerter_doctor.interfaces.LoadContentListener;
 import com.example.vaccine_alerter_doctor.network.NetWorker;
 import com.example.vaccine_alerter_doctor.network.Mtandao;
-import com.example.vaccine_alerter_doctor.util.SoftKeyBoard;
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.material.snackbar.Snackbar;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -76,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
                     if(Mtandao.checkInternet(LoginActivity.this)){
 
                        // SoftKeyBoard.hideSoftKeyBoard(LoginActivity.this);
+                        Log.d("---->Login Screen", Const.domain);
                         confirmLoginCredentials(logInId, logInPassword);
 
                     }else{
@@ -123,6 +118,7 @@ public class LoginActivity extends AppCompatActivity implements LoadContentListe
         saveDoctorDetails(id, names, gender, phoneNo, apiKey);
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
+        finish();
 
     }
 

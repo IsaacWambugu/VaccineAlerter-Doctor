@@ -872,6 +872,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
         dialogBuilder.setView(dialogView);
 
         final LinkedHashMap<String, Boolean> linkedVaccine = new LinkedHashMap<>();
+        vaccines = " ";
 
         for (int i = 0; i < Const.VACCINE_LIST.length; i++) {
 
@@ -885,6 +886,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
             @Override
             public void onItemsSelected(boolean[] selected) {
 
+                vaccines = " ";
 
                 for (int i = 0; i < selected.length; i++) {
 
@@ -919,10 +921,20 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
             @Override
             public void onClick(View v) {
 
-                dialogSpinKitView.setVisibility(View.VISIBLE);
-                SoftKeyBoard.hideSoftKeyBoard(ChildDetailsActivity.this);
-                new NetWorker().uploadChild(ChildDetailsActivity.this, 2, childId, fname, lname, dob, gender, vaccines.substring(1));
-            }
+                Log.d("---->vaccine length", String.valueOf(vaccines.length()));
+                if(vaccines == " "){
+
+                    message.setText("Please select vaccine! ");
+                    message.setVisibility(View.VISIBLE);
+                }else{
+                    message.setVisibility(View.GONE);
+                    dialogSpinKitView.setVisibility(View.VISIBLE);
+                    SoftKeyBoard.hideSoftKeyBoard(ChildDetailsActivity.this);
+                    new NetWorker().uploadChild(ChildDetailsActivity.this, 2, childId, fname, lname, dob, gender, vaccines.substring(1));
+                }
+
+
+              }
         });
     }
 
@@ -999,7 +1011,7 @@ public class ChildDetailsActivity extends AppCompatActivity implements UploadCon
                 if (operation == 1)
                     startActivity(new Intent(ChildDetailsActivity.this, LoginActivity.class));
                 else
-                    finish();
+                    alertDialog.dismiss();
             }
 
         }.start();

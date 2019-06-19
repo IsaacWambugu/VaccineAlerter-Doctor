@@ -3,7 +3,6 @@ package com.example.vaccine_alerter_doctor.data;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -76,6 +75,16 @@ public class PreferenceManager {
         editor.apply();
 
     }
+    public void setDomain(String domain){
+
+        editor  = sharedPref.edit();
+        editor.putString("domain",domain);
+        editor.apply();
+    }
+    public String getDomain(){
+
+        return sharedPref.getString("domain", null);
+    }
     public String getDoctorNumber(){
 
         return sharedPref.getString("doctor_number", null);
@@ -92,4 +101,5 @@ public class PreferenceManager {
 
         return sharedPref.getString("doctor_gender", null);
     }
+
 }

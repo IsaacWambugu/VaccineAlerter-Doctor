@@ -513,13 +513,13 @@ public class GuardianActivity extends AppCompatActivity implements LoadContentLi
 
         switch (operation) {
             case 1:
-                msg = "Are you want to add guardian?";
+                msg = "Please confirm you want to add guardian";
                 break;
             case 3:
-                msg = "Are you want to delete guardian?";
+                msg = "Please confirm you want to delete guardian";
                 break;
             case 2:
-                msg = "Are you want to update guardian?";
+                msg = "Please confirm you want to update guardian";
                 break;
         }
 
