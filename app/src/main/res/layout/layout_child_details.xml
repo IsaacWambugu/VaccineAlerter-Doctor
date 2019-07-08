@@ -6,6 +6,7 @@
     android:id="@+id/layout_child_details_view"
     android:descendantFocusability="afterDescendants"
     android:visibility="visible">
+
     <View
         android:layout_width="0px"
         android:layout_height="0px"

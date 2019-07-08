@@ -39,7 +39,7 @@
         android:hint="@string/dob_hit"
         android:inputType="text" />
 
-    <com.example.vaccine_alerter_doctor.util.MultiSpinner
+    <izo.apps.vaccine_alerter_doctor.util.MultiSpinner
         android:id="@+id/child_vaccine_spinner"
         style="@style/vaccine_spinner"
         android:visibility="visible"

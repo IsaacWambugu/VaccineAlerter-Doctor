@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">V-Alerter(Doctor)</string>
+    <string name="app_name">V-Alerter(D)</string>
     <string name="action_settings">Settings</string>
 
 
@@ -13,7 +13,6 @@
     <!--  Into Activity -->
     <string name="input_id">Id number</string>
     <string name="btn_continue">Continue</string>
-
 
     <!-- Vaccine names -->
     <string name="bcg">BCG (Tuberculosis)</string>

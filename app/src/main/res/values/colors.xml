@@ -4,19 +4,15 @@
     <color name="colorPrimaryDark">#0000CD</color>
     <color name="colorAccent">#00008B</color>
     <color name="customGrey">#907886</color>
-
     <color name="darkRed">#8B0000</color>
     <color name="navyBlue">#000080</color>
-
     <color name="black">#000000</color>
     <!--Toolbar-->
     <color name="action_bar">#800000</color>
     <color name="actionbar_text">#FFFFFF</color>
-
     <color name="colorFAB1">#2196F3</color>
     <color name="colorFAB2">#E040FB</color>
     <color name="colorHint">#919389</color>
-
     <color name="colorPrimaryLight">#B2EBF2</color>
     <color name="colorIcon">#FFFFFF</color>
     <color name="colorPrimaryText">#212121</color>
@@ -24,7 +20,6 @@
     <color name="colorDivider">#B6B6B6</color>
     <color name="white">#FFFFFF</color>
     <color name="sp_white">#FFF0F5</color>
-
     <color name="transparentBackground">#50000000</color>
     <!--dialog buttons -->
     <color name="transparent_color">#80000000</color>
